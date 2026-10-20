@@ -88,3 +88,13 @@ def test_paraphrase_consistency_disagree():
              "parsed_answer": v} for v in (0.5, 0.5, 0.9, 0.5)]
     out = paraphrase_consistency(labs)
     assert out[("t.q01", "single_react")] is False
+
+# --- labelled-output paths ------------------------------------------------- #
+def test_fault_corpus_labels_do_not_overwrite_baseline_labels():
+    """The robustness study needs both tables, so their paths must differ."""
+    from agentrel.labelling.pipeline import default_label_path
+
+    baseline = default_label_path("results/runs.jsonl")
+    faulted = default_label_path("results/runs_faults.jsonl")
+    assert baseline.name == "labelled.parquet"      # the documented M1 path
+    assert faulted != baseline

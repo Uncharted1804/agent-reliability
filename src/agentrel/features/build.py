@@ -122,7 +122,7 @@ def feature_summary(df: pd.DataFrame) -> str:
         lines.append(f"{block}:")
         for name in names:
             col = df[name]
-            if col.dtype == object or isinstance(col.dtype, pd.CategoricalDtype):
+            if not pd.api.types.is_numeric_dtype(col):
                 lines.append(f"  {name:22s} {col.nunique()} levels: "
                              f"{sorted(col.dropna().unique())[:6]}")
             else:

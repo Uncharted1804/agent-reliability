@@ -45,7 +45,9 @@ agent-reliability/
 │   ├── topology/        # single ReAct, orchestrator-worker, peer tool-graph
 │   ├── harness/         # run generator, trace logging schema
 │   ├── labelling/       # answer parsing, Eq.1 labelling, log cleaning
-│   ├── features/        # (stub for later 30%) static/dynamic/graph features
+│   ├── features/        # static / dynamic / graph feature engineering
+│   ├── model/           # split, pipelines, metrics, classifier training
+│   ├── faults/          # fault injection + robustness ΔT,f
 │   └── utils/           # config, io, logging helpers
 ├── datasets/            # downloaded raw data (gitignored) + question banks
 ├── configs/             # experiment config (topologies, faults, splits)
@@ -54,11 +56,29 @@ agent-reliability/
 └── results/             # run corpus, labels (gitignored)
 ```
 
-## Status — current milestone (~30%)
+## Status — Milestone 2
 
-Implemented: project scaffold; dataset acquisition + preprocessing; deterministic pandas ground-truth; question templates (10/dataset) with 4 paraphrases each; agent-run harness + trace schema; 3 topology implementations against a local model; labelling + log-cleaning module.
+Implemented: everything in Milestone 1, plus
 
-Not yet (later milestones): feature engineering (static/dynamic/graph), LightGBM training + baselines, fault-injection experiments, robustness ΔT,f with bootstrap CIs, and the step-(G) analysis linking predictors to robustness.
+* **feature engineering** (`features/`) — static (data + question), dynamic (trace), and graph features from the tool-interaction graph G=(V,E). The names in `features/schema.py` are the contract; each block asserts it produced exactly those keys.
+* **silent-failure classifier** (`model/`) — class-weighted LightGBM with logistic-regression, SMOTE+LR, SMOTE+LightGBM and prior-dummy baselines, on the grouped-by-template 70/15/15 split. Reports F2 / PR-AUC / Brier, with the F2 threshold chosen on validation and frozen for test.
+* **fault injection + robustness** (`faults/`) — `tool_failure`, `corrupted_output`, `dropped_context`, and Δ_T,f with cluster-bootstrap CIs (1000 resamples, resampled over templates).
+
+Not yet: the step-(G) analysis linking predictor outputs to robustness.
+
+### Methodology notes
+
+Three choices are worth knowing before reading any number this produces:
+
+* **Topology is not a feature.** It is the variable the robustness study manipulates, so letting the classifier read it would confound "this wiring fails more" with "this task is hard".
+* **The split groups on `template_id`.** A template appears as 5 phrasings × 3 topologies, i.e. up to 15 near-duplicate rows. A row-wise split would put paraphrases of a training question in test and the reported F2 would mostly measure memorisation.
+* **The bootstrap resamples templates, not runs.** Paraphrases of one template are near duplicates; resampling runs treats them as independent observations and gives CIs that are too narrow.
+
+### Corpus actually generated
+
+`expand_questions` emits the canonical phrasing *plus* 4 paraphrases, so the base corpus is 5 datasets × 10 templates × 5 phrasings × 3 topologies = **750 runs**, not the 600 in the table above (which counts paraphrases only).
+
+Fault runs are scaled by `fault_runs.paraphrases_per_template` in `configs/experiment.yaml` (default 1 = canonical phrasing only → 450 runs). A run costs ~15 s against a CPU-served local model, so the full 750 × 3 design is ~10 h; the default keeps every template and topology represented at a third of the cost. Set it to 5 to reproduce the full design.
 
 ## Quick start
 
@@ -73,7 +93,19 @@ python scripts/build_question_banks.py
 # 2. (needs a local model served by Ollama, e.g. `ollama pull llama3.1`)
 python scripts/generate_runs.py --config configs/experiment.yaml --limit 4   # smoke test
 python scripts/label_runs.py --runs results/runs.jsonl
+
+# 3. classifier (block D)
+python scripts/train_classifier.py --runs results/runs.jsonl
+
+# 4. fault injection + robustness (blocks E/F)
+python scripts/generate_fault_runs.py --no-mock
+python scripts/label_runs.py --runs results/runs_faults.jsonl
+python scripts/robustness.py
 ```
+
+`make all` runs the whole chain; `make test` runs the suite. Pass `--no-mock` to
+the generators to fail loudly instead of falling back to `MockLLM` — worth doing
+whenever the numbers are meant to be real.
 
 ## Base LLM
 

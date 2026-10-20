@@ -61,7 +61,8 @@ def transition_entropy(tools: Iterable[str]) -> float:
     total = sum(transitions.values())
     if total == 0:
         return 0.0
-    return float(-sum((c / total) * math.log2(c / total) for c in transitions.values()))
+    entropy = -sum((c / total) * math.log2(c / total) for c in transitions.values())
+    return float(entropy) + 0.0  # normalise -0.0 from a single certain transition
 
 
 def n_cycles(g: nx.DiGraph) -> float:

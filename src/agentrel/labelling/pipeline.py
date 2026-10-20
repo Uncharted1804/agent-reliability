@@ -28,6 +28,20 @@ def _load_all_truth(datasets: list[str]) -> dict[str, dict]:
     return truth
 
 
+def default_label_path(runs_path: str | Path) -> Path:
+    """Where the labelled table for `runs_path` goes.
+
+    The baseline corpus keeps the documented results/labelled.parquet, while any
+    other corpus (notably runs_faults.jsonl) gets its own <stem>_labelled.parquet.
+    Deriving one fixed name for every input would make labelling the fault corpus
+    silently overwrite the baseline labels, which the robustness study needs.
+    """
+    runs_path = Path(runs_path)
+    if runs_path.stem == "runs":
+        return runs_path.with_name("labelled.parquet")
+    return runs_path.with_name(f"{runs_path.stem}_labelled.parquet")
+
+
 def run_pipeline(runs_path: str | Path, eps: float,
                  out_path: str | Path | None = None) -> pd.DataFrame:
     runs = list(read_jsonl(runs_path))
@@ -65,7 +79,7 @@ def run_pipeline(runs_path: str | Path, eps: float,
 
     df = cap_heavy_tails(df)
 
-    out_path = Path(out_path) if out_path else Path(runs_path).with_name("labelled.parquet")
+    out_path = Path(out_path) if out_path else default_label_path(runs_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(out_path, index=False)
     df.to_csv(out_path.with_suffix(".csv"), index=False)  # human-inspectable copy

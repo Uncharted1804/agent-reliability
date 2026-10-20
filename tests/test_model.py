@@ -296,6 +296,29 @@ def test_training_threshold_comes_from_validation_not_test(tmp_path, stub_static
                payload["val_metrics"][name]["threshold"]
 
 
+def test_training_refuses_a_single_class_training_fold(tmp_path, stub_static):
+    """A fold can be single-class even when the corpus is not.
+
+    The grouped split allocates whole templates, so on a small corpus every
+    failure can land outside train. That must raise rather than silently skip
+    the models and print an empty results table.
+    """
+    from agentrel.model.train import train_and_evaluate
+
+    runs_path = _write_corpus(tmp_path, n_templates=6)
+    labels = pd.read_parquet(tmp_path / "labelled.parquet")
+    # make failures occur only in templates that the seeded split sends to test
+    from agentrel.model.split import grouped_split
+    groups = labels["run_id"].str.split(".p").str[0]
+    split = grouped_split(groups, **{k: v for k, v in SPLIT_CFG.items()
+                                     if k != "scheme"})
+    labels["label_failure"] = 0
+    labels.loc[split.test, "label_failure"] = 1
+    labels.to_parquet(tmp_path / "labelled.parquet", index=False)
+    with pytest.raises(ValueError, match="training fold is single-class"):
+        train_and_evaluate(runs_path, SPLIT_CFG)
+
+
 def test_training_refuses_a_single_class_corpus(tmp_path, stub_static):
     from agentrel.model.train import train_and_evaluate
 

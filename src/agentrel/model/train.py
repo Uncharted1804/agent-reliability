@@ -66,7 +66,18 @@ def train_and_evaluate(runs_path: str | Path, cfg_split: dict,
     X_va, y_va = X[split.val], y[split.val]
     X_te, y_te = X[split.test], y[split.test]
 
+    # The grouped split allocates whole templates, so on a small corpus a fold
+    # can end up single-class. Fail loudly here: silently skipping the models
+    # would print an empty results table that looks like a formatting glitch.
     n_minority = int(min((y_tr == 0).sum(), (y_tr == 1).sum()))
+    if n_minority == 0:
+        raise ValueError(
+            f"the training fold is single-class (failure rate "
+            f"{y_tr.mean():.0%} over {len(y_tr)} runs from "
+            f"{len(split.train_groups)} templates). The grouped split allocates "
+            f"whole templates, so this means the corpus has too few templates "
+            f"for a 3-way split — generate more runs before training.")
+
     models = adapt_smote(build_models(ALL_FEATURES), n_minority)
 
     results: dict[str, dict[str, float]] = {}
@@ -75,8 +86,6 @@ def train_and_evaluate(runs_path: str | Path, cfg_split: dict,
     fitted: dict[str, Any] = {}
 
     for name, model in models.items():
-        if y_tr.nunique() < 2:  # pragma: no cover — guarded above
-            continue
         model.fit(X_tr, y_tr)
         fitted[name] = model
 
