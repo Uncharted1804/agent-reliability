@@ -20,6 +20,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from ..labelling.pipeline import default_label_path
 from ..utils.config import REPO_ROOT
 from ..utils.io import read_jsonl
 from .dynamic import dynamic_features
@@ -87,8 +88,10 @@ def build_feature_frame(runs_path: str | Path,
 
     frame = pd.DataFrame([features_for_run(r, meta) for r in runs])
 
-    labelled_path = (Path(labelled_path) if labelled_path
-                     else Path(runs_path).with_name("labelled.parquet"))
+    # must agree with the labelling pipeline's own default, or a corpus whose
+    # labels live at <stem>_labelled.parquet silently merges against whatever
+    # labelled.parquet happens to sit beside it — possibly a different corpus
+    labelled_path = Path(labelled_path) if labelled_path else default_label_path(runs_path)
     if not Path(labelled_path).exists():
         raise FileNotFoundError(
             f"labelled table {labelled_path} missing — run scripts/label_runs.py")

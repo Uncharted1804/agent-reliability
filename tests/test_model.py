@@ -261,6 +261,32 @@ def test_build_feature_frame_produces_one_row_per_run(tmp_path, stub_static):
     assert groups.nunique() == 24
 
 
+def test_feature_build_and_labelling_agree_on_the_label_path(tmp_path, stub_static):
+    """A disagreement here silently merges a corpus against another's labels."""
+    from agentrel.features.build import default_label_path as build_default
+    from agentrel.labelling.pipeline import default_label_path as label_default
+
+    for name in ("runs.jsonl", "runs_faults.jsonl", "snapshot.jsonl"):
+        assert build_default(tmp_path / name) == label_default(tmp_path / name)
+
+
+def test_build_feature_frame_ignores_a_stale_sibling_label_file(tmp_path, stub_static):
+    """A non-baseline corpus must not pick up a neighbouring labelled.parquet."""
+    from agentrel.features.build import build_feature_frame
+
+    runs_path = _write_corpus(tmp_path, n_templates=8)
+    # labels for this corpus live beside it under its own stem
+    labels = pd.read_parquet(tmp_path / "labelled.parquet")
+    snapshot = tmp_path / "snapshot.jsonl"
+    snapshot.write_bytes(runs_path.read_bytes())
+    labels.to_parquet(tmp_path / "snapshot_labelled.parquet", index=False)
+    # a stale, unrelated labelled.parquet sits next to it covering 2 runs only
+    labels.head(2).to_parquet(tmp_path / "labelled.parquet", index=False)
+
+    frame = build_feature_frame(snapshot)
+    assert len(frame) == len(labels)      # used its own labels, not the stale ones
+
+
 def test_build_feature_frame_raises_on_unlabelled_runs(tmp_path, stub_static):
     from agentrel.features.build import build_feature_frame
 
