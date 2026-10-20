@@ -15,26 +15,115 @@ import time
 from abc import ABC, abstractmethod
 
 from ..agents.llm import LLM
-from ..agents.tools import Session, call_tool
+from ..agents.tools import Session, available_tools, call_tool, schema_digest
 from ..harness.trace import RunTrace, ToolCall
 
-ACTION_PROTOCOL = """You are a data-analysis agent. Respond with ONE JSON object.
+# The protocol must document each tool's ARGUMENTS, not just its name. With
+# names alone the model cannot form a valid call, so it skips tools and guesses
+# the answer outright — which yields an empty tool-interaction graph and makes
+# the graph features (and therefore the classifier) degenerate.
+ACTION_PROTOCOL = """You are a data-analysis agent working on a real table.
+Respond with ONE JSON object and nothing else.
+
 To call a tool: {"action":"tool","tool":"<name>","args":{...}}
 To answer:      {"action":"final","answer":"<value>"}
-Available tools: list_tables, load_table, filter_rows, aggregate,
-group_aggregate, join_tables, compute_missing_rate.
-Answer with only the value (a number or a single category label)."""
+
+Tools and their exact arguments:
+  list_tables          {}  -> row counts and columns of every table
+  load_table           {"table":"<name>"}  -> make that table the working frame
+  filter_rows          {"query":"<pandas query>"}  e.g. "Sex == 'male' and Age > 30"
+  aggregate            {"op":"mean|sum|median|count|max|min|nunique","column":"<col>"}
+  group_aggregate      {"by":"<col>","op":"mean|sum|count|median|max|min",
+                        "column":"<col>","pick":"idxmax|idxmin|value"}
+  join_tables          {"left":"<name>","right":"<name>","on":"<col>","how":"left|inner"}
+  compute_missing_rate {"column":"<col>"}  -> fraction of values missing
+
+Rules:
+  * Emit exactly ONE action per reply — the next single step, never a whole plan.
+  * Compute the answer from the data using tools. Never guess a value from memory.
+  * filter_rows and aggregate act on the working frame, so load_table first.
+  * Column names are case-sensitive and must be taken from the schema you are given.
+  * Once a tool has returned the value, answer with only that value: a bare
+    number (rates as a fraction, e.g. 0.38) or a single category label."""
+
+
+def initial_history(trace: RunTrace, session: Session) -> str:
+    """Opening context shared by all three topologies.
+
+    The schema is descriptive only (names, dtypes, cardinality, missing rate) —
+    it never contains the answer, so every topology still has to do the
+    analysis. Giving all three the same preamble keeps the topology the only
+    variable the robustness study manipulates.
+    """
+    return (f"Schema of the data you may analyse:\n{schema_digest(session)}\n\n"
+            f"Question: {trace.question_text}\n")
+
+
+# Models deviate from the action protocol in a few predictable ways, and a
+# parser that rejects them would record an empty trace — making the dynamic and
+# graph features measure the parser's brittleness instead of the agent's
+# behaviour. The deviations tolerated here are exactly the ones observed from a
+# local model: a whole multi-step plan emitted at once (we take the first
+# action and let the loop re-prompt), the tool name placed directly in
+# "action", and tool arguments flattened to the top level instead of "args".
+_ARG_KEYS = {"table", "query", "op", "column", "by", "pick", "left", "right", "on", "how"}
+_CONTROL_ACTIONS = {"accept", "redo", "handoff"}
+
+
+def _first_json_object(text: str) -> dict | None:
+    """First syntactically valid JSON object in the text, if any."""
+    decoder = json.JSONDecoder()
+    for i, ch in enumerate(text):
+        if ch != "{":
+            continue
+        try:
+            obj, _ = decoder.raw_decode(text[i:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(obj, dict):
+            return obj
+    return None
+
+
+def normalise_action(obj: dict) -> dict:
+    """Map a loosely-shaped model action onto the protocol, or {} if it is not one."""
+    act = str(obj.get("action", "")).strip().lower()
+    tool = obj.get("tool")
+
+    # the tool name used as the action verb: {"action":"load_table", ...}
+    if not tool and act in available_tools():
+        tool, act = act, "tool"
+
+    if act == "tool" or tool:
+        args = obj.get("args")
+        if not isinstance(args, dict):
+            # arguments flattened alongside the action
+            args = {k: v for k, v in obj.items() if k in _ARG_KEYS}
+        return {"action": "tool", "tool": str(tool or ""), "args": args}
+
+    if act in ("final", "answer"):
+        answer = obj.get("answer", obj.get("value", ""))
+        return {"action": "final", "answer": answer}
+
+    if act in _CONTROL_ACTIONS:
+        return {"action": act}
+
+    return {}
 
 
 def parse_action(text: str) -> dict:
-    """Best-effort parse of the model's JSON action. Tolerates stray prose."""
+    """Best-effort parse of the model's JSON action. Tolerates stray prose.
+
+    Falls back to treating the whole reply as a final answer, which keeps a
+    malformed reply in the corpus as a (likely) failure rather than dropping
+    the run — an unusable answer is itself the signal being measured.
+    """
     text = (text or "").strip()
-    start, end = text.find("{"), text.rfind("}")
-    if start != -1 and end != -1 and end > start:
-        try:
-            return json.loads(text[start:end + 1])
-        except json.JSONDecodeError:
-            pass
+    obj = _first_json_object(text)
+    if obj is not None:
+        action = normalise_action(obj)
+        if action:
+            return action
     return {"action": "final", "answer": text}
 
 

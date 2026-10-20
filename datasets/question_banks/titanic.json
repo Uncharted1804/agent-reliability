@@ -558,7 +558,7 @@
       "dataset": "titanic",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 0.362514,
+      "value": 0.385569,
       "error": null
     },
     "titanic.q02": {
@@ -566,7 +566,7 @@
       "dataset": "titanic",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 891,
+      "value": 887,
       "error": null
     },
     "titanic.q03": {
@@ -574,7 +574,7 @@
       "dataset": "titanic",
       "kind": "filtering",
       "answer_type": "numeric",
-      "value": 224,
+      "value": 216,
       "error": null
     },
     "titanic.q04": {
@@ -590,7 +590,7 @@
       "dataset": "titanic",
       "kind": "group_comparison",
       "answer_type": "numeric",
-      "value": 0.426,
+      "value": 0.551811,
       "error": null
     },
     "titanic.q06": {
@@ -598,7 +598,7 @@
       "dataset": "titanic",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 41.745435,
+      "value": 17.863915,
       "error": null
     },
     "titanic.q07": {
@@ -606,7 +606,7 @@
       "dataset": "titanic",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 29.2,
+      "value": 28.0,
       "error": null
     },
     "titanic.q08": {
@@ -614,7 +614,7 @@
       "dataset": "titanic",
       "kind": "group_comparison",
       "answer_type": "numeric",
-      "value": 76.716931,
+      "value": 64.241029,
       "error": null
     },
     "titanic.q09": {
@@ -622,7 +622,7 @@
       "dataset": "titanic",
       "kind": "filtering",
       "answer_type": "numeric",
-      "value": 198,
+      "value": 233,
       "error": null
     },
     "titanic.q10": {
@@ -630,7 +630,7 @@
       "dataset": "titanic",
       "kind": "multi_step",
       "answer_type": "numeric",
-      "value": 0.555556,
+      "value": 0.586667,
       "error": null
     }
   }

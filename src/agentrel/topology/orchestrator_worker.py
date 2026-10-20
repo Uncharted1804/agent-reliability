@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from ..agents.tools import Session
 from ..harness.trace import RunTrace
-from .base import ACTION_PROTOCOL, Topology
+from .base import ACTION_PROTOCOL, Topology, initial_history
 
 ORCH_SYSTEM = (ACTION_PROTOCOL + "\nYou are the ORCHESTRATOR. Decide the next tool "
                "call that moves toward the answer, or finalise.")
@@ -20,7 +20,7 @@ class OrchestratorWorker(Topology):
     name = "orchestrator_worker"
 
     def run(self, trace: RunTrace, session: Session) -> None:
-        history = f"Question: {trace.question_text}\n"
+        history = initial_history(trace, session)
         step = 0
         while step < self.max_steps:
             action = self._ask(trace, ORCH_SYSTEM, history)

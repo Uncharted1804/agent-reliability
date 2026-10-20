@@ -558,7 +558,7 @@
       "dataset": "adult_census",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 6000,
+      "value": 32561,
       "error": null
     },
     "adult.q02": {
@@ -566,7 +566,7 @@
       "dataset": "adult_census",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 52.916333,
+      "value": 38.581647,
       "error": null
     },
     "adult.q03": {
@@ -574,7 +574,7 @@
       "dataset": "adult_census",
       "kind": "filtering",
       "answer_type": "numeric",
-      "value": 1232,
+      "value": 7841,
       "error": null
     },
     "adult.q04": {
@@ -582,7 +582,7 @@
       "dataset": "adult_census",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 39.842667,
+      "value": 40.437456,
       "error": null
     },
     "adult.q05": {
@@ -590,7 +590,7 @@
       "dataset": "adult_census",
       "kind": "group_comparison",
       "answer_type": "categorical",
-      "value": "11th",
+      "value": "Doctorate",
       "error": null
     },
     "adult.q06": {
@@ -598,7 +598,7 @@
       "dataset": "adult_census",
       "kind": "group_comparison",
       "answer_type": "numeric",
-      "value": 6.867085,
+      "value": 7.466103,
       "error": null
     },
     "adult.q07": {
@@ -606,7 +606,7 @@
       "dataset": "adult_census",
       "kind": "filtering",
       "answer_type": "numeric",
-      "value": 1442,
+      "value": 8067,
       "error": null
     },
     "adult.q08": {
@@ -614,7 +614,7 @@
       "dataset": "adult_census",
       "kind": "aggregation",
       "answer_type": "categorical",
-      "value": "Craft-repair",
+      "value": "Prof-specialty",
       "error": null
     },
     "adult.q09": {
@@ -622,7 +622,7 @@
       "dataset": "adult_census",
       "kind": "aggregation",
       "answer_type": "numeric",
-      "value": 39.845598,
+      "value": 41.565533,
       "error": null
     },
     "adult.q10": {
@@ -630,7 +630,7 @@
       "dataset": "adult_census",
       "kind": "multi_step",
       "answer_type": "numeric",
-      "value": 0.240542,
+      "value": 0.402463,
       "error": null
     }
   }

@@ -162,3 +162,39 @@ def call_tool(name: str, session: Session, args: dict[str, Any]) -> ToolResult:
     if fn is None:
         return ToolResult(ok=False, error=f"UnknownTool: {name!r}")
     return fn(session, args)
+
+
+# --------------------------------------------------------------------------- #
+# Schema digest — what the agent is allowed to know about the data up front.
+# --------------------------------------------------------------------------- #
+# Without this the model cannot do real analysis: it does not know the column
+# names, so it either calls tools with invalid args or skips tools entirely and
+# guesses. A guessed answer produces an empty tool-interaction graph, which
+# makes the graph features degenerate, so the digest is load-bearing for the
+# whole measurement layer. It is deliberately *descriptive only* (names, dtypes,
+# cardinality, missing rate) — never the answer to any question.
+_MAX_LEVELS = 8
+
+
+def schema_digest(session: Session, max_cols: int = 40) -> str:
+    """Compact, deterministic description of the session's tables."""
+    lines: list[str] = []
+    for name, df in session.tables.items():
+        lines.append(f"table {name}: {len(df)} rows, {len(df.columns)} columns")
+        for col in list(df.columns)[:max_cols]:
+            s = df[col]
+            dtype = str(s.dtype)
+            miss = float(s.isna().mean())
+            desc = f"  - {col} ({dtype}"
+            if miss > 0:
+                desc += f", {miss:.0%} missing"
+            if pd.api.types.is_string_dtype(s) or isinstance(s.dtype, pd.CategoricalDtype):
+                levels = s.dropna().unique()
+                if len(levels) <= _MAX_LEVELS:
+                    desc += f", values: {sorted(map(str, levels))}"
+                else:
+                    desc += f", {len(levels)} distinct"
+            lines.append(desc + ")")
+        if len(df.columns) > max_cols:
+            lines.append(f"  ... {len(df.columns) - max_cols} more columns")
+    return "\n".join(lines)

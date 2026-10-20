@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from ..agents.tools import Session
 from ..harness.trace import RunTrace
-from .base import ACTION_PROTOCOL, Topology
+from .base import ACTION_PROTOCOL, Topology, initial_history
 
 
 class SingleReAct(Topology):
@@ -14,7 +14,7 @@ class SingleReAct(Topology):
 
     def run(self, trace: RunTrace, session: Session) -> None:
         system = ACTION_PROTOCOL
-        history = f"Question: {trace.question_text}\n"
+        history = initial_history(trace, session)
         step = 0
         while step < self.max_steps:
             action = self._ask(trace, system, history)

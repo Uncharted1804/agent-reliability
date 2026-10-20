@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from ..agents.tools import Session
 from ..harness.trace import RunTrace
-from .base import ACTION_PROTOCOL, Topology
+from .base import ACTION_PROTOCOL, Topology, initial_history
 
 # Each peer owns a subset of tools and routes to the next peer by analysis stage.
 PEERS = {
@@ -28,7 +28,7 @@ class PeerToolGraph(Topology):
     name = "peer_tool_graph"
 
     def run(self, trace: RunTrace, session: Session) -> None:
-        history = f"Question: {trace.question_text}\n"
+        history = initial_history(trace, session)
         peer = "loader"
         step = 0
         handoffs = 0
