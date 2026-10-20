@@ -24,10 +24,18 @@ questions:
   templates_per_dataset: 10
   paraphrases_per_template: 4
 
-faults:                       # robustness study (later milestone)
+faults:                       # robustness study
   - tool_failure              # a tool call returns an error / nothing
   - corrupted_output          # an intermediate output is silently mutated
   - dropped_context           # prior step's result is withheld from the model
+
+fault_runs:
+  # Phrasings per template to re-run under each fault. 1 = canonical only,
+  # which keeps every template and topology represented (the dimensions
+  # Delta_{T,f} is estimated across) at a third of the compute. Set to 5 for
+  # the report's full 600x3 design.
+  paraphrases_per_template: 1
+  bootstrap_resamples: 1000   # cluster bootstrap for the Delta_{T,f} CIs
 
 labelling:
   numeric_tolerance: 0.01     # 1% relative tolerance (epsilon in Eq.1)

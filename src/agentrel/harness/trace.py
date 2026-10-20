@@ -50,6 +50,14 @@ class RunTrace:
     timed_out: bool = False                # hit max_agent_steps / run_timeout
     harness_error: str | None = None       # the harness itself failed (not the agent)
 
+    # fault injection (robustness study). A fault targets a step index chosen
+    # before the run starts, so a run that ends early never reaches it —
+    # `fault_realised` records whether the fault actually fired, and only
+    # realised runs enter the Delta_{T,f} estimate.
+    injected_fault: str | None = None
+    fault_target_step: int | None = None
+    fault_realised: bool = False
+
     def add_call(self, call: ToolCall) -> None:
         self.calls.append(call)
 

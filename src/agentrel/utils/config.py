@@ -58,6 +58,14 @@ class Config:
         return int(self.raw.get("questions", {}).get("paraphrases_per_template", 4))
 
     @property
+    def fault_paraphrases(self) -> int:
+        return int(self.raw.get("fault_runs", {}).get("paraphrases_per_template", 1))
+
+    @property
+    def bootstrap_resamples(self) -> int:
+        return int(self.raw.get("fault_runs", {}).get("bootstrap_resamples", 1000))
+
+    @property
     def log_dir(self) -> Path:
         return REPO_ROOT / self.raw.get("runtime", {}).get("log_dir", "results")
 

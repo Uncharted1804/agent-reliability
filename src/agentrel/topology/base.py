@@ -130,9 +130,12 @@ def parse_action(text: str) -> dict:
 class Topology(ABC):
     name: str = "base"
 
-    def __init__(self, llm: LLM, max_steps: int = 12):
+    def __init__(self, llm: LLM, max_steps: int = 12, injector=None):
         self.llm = llm
         self.max_steps = max_steps
+        # optional FaultInjector (block E). None for baseline runs, so the
+        # faulted and unfaulted corpora come from identical control flow.
+        self.injector = injector
 
     @abstractmethod
     def run(self, trace: RunTrace, session: Session) -> None:
@@ -140,6 +143,8 @@ class Topology(ABC):
 
     # -- helpers shared by subclasses -------------------------------------- #
     def _ask(self, trace: RunTrace, system: str, user: str) -> dict:
+        if self.injector is not None:
+            user = self.injector.on_prompt(user)
         resp = self.llm.complete(system, user)
         trace.n_llm_calls += 1
         trace.prompt_tokens += resp.prompt_tokens
@@ -150,10 +155,17 @@ class Topology(ABC):
                    step: int, tool: str, args: dict, is_retry: bool = False) -> bool:
         t0 = time.time()
         result = call_tool(tool, session, args)
+        injected = None
+        if self.injector is not None:
+            before = self.injector.realised
+            result = self.injector.on_tool_result(step, tool, result, session)
+            if self.injector.realised and not before:
+                injected = self.injector.fault
         trace.add_call(ToolCall(
             step=step, agent_role=role, tool=tool, args=args,
             output_repr=result.repr if result.ok else "",
             ok=result.ok, error=result.error, is_retry=is_retry,
             latency_s=round(time.time() - t0, 4),
+            injected_fault=injected,
         ))
         return result.ok

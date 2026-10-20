@@ -37,6 +37,10 @@ def flatten_run(run: dict) -> dict:
         "wall_time_s": run.get("wall_time_s", 0.0),
         "timed_out": int(bool(run.get("timed_out", False))),
         "harness_error": int(bool(run.get("harness_error"))),
+        # fault-injection provenance (None / 0 for baseline runs), carried
+        # through so the robustness study can read the labelled table directly
+        "injected_fault": run.get("injected_fault"),
+        "fault_realised": int(bool(run.get("fault_realised", False))),
     }
 
 

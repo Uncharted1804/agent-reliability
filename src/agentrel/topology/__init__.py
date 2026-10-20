@@ -13,7 +13,7 @@ TOPOLOGIES: dict[str, type[Topology]] = {
 }
 
 
-def build_topology(name: str, llm, max_steps: int = 12) -> Topology:
+def build_topology(name: str, llm, max_steps: int = 12, injector=None) -> Topology:
     if name not in TOPOLOGIES:
         raise KeyError(f"unknown topology {name!r}; known: {sorted(TOPOLOGIES)}")
-    return TOPOLOGIES[name](llm, max_steps=max_steps)
+    return TOPOLOGIES[name](llm, max_steps=max_steps, injector=injector)

@@ -58,6 +58,7 @@ def run_pipeline(runs_path: str | Path, eps: float,
 
     # parsed_answer and truth_value mix numeric + categorical across rows; store
     # as strings so the corpus serialises cleanly (they are records, not features)
+    df["injected_fault"] = df["injected_fault"].astype("string")
     df["parsed_answer"] = df["parsed_answer"].astype("string")
     df["truth_value"] = df["truth_value"].astype("string")
     df["label_reason"] = df["label_reason"].astype("string")
