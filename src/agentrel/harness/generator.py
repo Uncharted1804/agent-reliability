@@ -7,6 +7,7 @@ corpus that feeds both the failure predictor and the robustness study.
 from __future__ import annotations
 
 import json
+import time
 from pathlib import Path
 
 from ..agents.llm import build_llm
@@ -35,6 +36,16 @@ def generate(cfg: Config, *, out_path: str | Path | None = None,
         out_path.unlink()  # fresh corpus
     llm = build_llm(cfg.llm, allow_mock=allow_mock)
 
+    # total is known up front, so a multi-hour generation can report progress
+    total = 0
+    for dataset in cfg.datasets:
+        bank = _load_bank(dataset)
+        qs = bank["questions"][:limit] if limit else bank["questions"]
+        total += len(qs) * len(cfg.topologies)
+    print(f"Generating {total} runs with {llm.__class__.__name__} "
+          f"({cfg.llm.model}) -> {out_path}", flush=True)
+
+    t_start = time.time()
     n_runs = 0
     for dataset in cfg.datasets:
         bank = _load_bank(dataset)
@@ -61,6 +72,12 @@ def generate(cfg: Config, *, out_path: str | Path | None = None,
                     trace.finish(None)
                 append_jsonl(out_path, trace.to_dict())
                 n_runs += 1
+                if n_runs % 10 == 0 or n_runs == total:
+                    elapsed = time.time() - t_start
+                    rate = elapsed / n_runs
+                    eta = rate * (total - n_runs)
+                    print(f"  [{n_runs}/{total}] {dataset} {topo_name} "
+                          f"{rate:.1f}s/run  eta {eta/60:.0f}m", flush=True)
 
     print(f"Generated {n_runs} runs -> {out_path}")
     return out_path
