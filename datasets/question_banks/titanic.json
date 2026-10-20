@@ -1,0 +1,637 @@
+{
+  "dataset": "titanic",
+  "questions": [
+    {
+      "question_id": "titanic.q01.p0",
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the overall survival rate of passengers?"
+    },
+    {
+      "question_id": "titanic.q01.p1",
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What fraction of passengers survived?"
+    },
+    {
+      "question_id": "titanic.q01.p2",
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "What proportion of all passengers lived?"
+    },
+    {
+      "question_id": "titanic.q01.p3",
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Across everyone on board, what share survived?"
+    },
+    {
+      "question_id": "titanic.q01.p4",
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the mean of the survival indicator over all passengers?"
+    },
+    {
+      "question_id": "titanic.q02.p0",
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many passengers are in the dataset?"
+    },
+    {
+      "question_id": "titanic.q02.p1",
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What is the total passenger count?"
+    },
+    {
+      "question_id": "titanic.q02.p2",
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many rows of passengers are there?"
+    },
+    {
+      "question_id": "titanic.q02.p3",
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Count the passengers in the table."
+    },
+    {
+      "question_id": "titanic.q02.p4",
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the number of passenger records?"
+    },
+    {
+      "question_id": "titanic.q03.p0",
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many passengers were in 1st class (Pclass 1)?"
+    },
+    {
+      "question_id": "titanic.q03.p1",
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Count the first-class passengers."
+    },
+    {
+      "question_id": "titanic.q03.p2",
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many travellers held a class-1 ticket?"
+    },
+    {
+      "question_id": "titanic.q03.p3",
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "What is the number of passengers whose class is 1?"
+    },
+    {
+      "question_id": "titanic.q03.p4",
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Among all passengers, how many were first class?"
+    },
+    {
+      "question_id": "titanic.q04.p0",
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "Which passenger class had the highest survival rate?"
+    },
+    {
+      "question_id": "titanic.q04.p1",
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "In which ticket class did the largest share survive?"
+    },
+    {
+      "question_id": "titanic.q04.p2",
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Which class of passenger was most likely to survive?"
+    },
+    {
+      "question_id": "titanic.q04.p3",
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "By class, which had the greatest survival proportion?"
+    },
+    {
+      "question_id": "titanic.q04.p4",
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Which Pclass shows the top survival rate?"
+    },
+    {
+      "question_id": "titanic.q05.p0",
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the difference in survival rate between female and male passengers?"
+    },
+    {
+      "question_id": "titanic.q05.p1",
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "By how much does female survival exceed male survival?"
+    },
+    {
+      "question_id": "titanic.q05.p2",
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "What is the gap in survival proportion between women and men?"
+    },
+    {
+      "question_id": "titanic.q05.p3",
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Female minus male survival rate \u2014 what is it?"
+    },
+    {
+      "question_id": "titanic.q05.p4",
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "How much higher was the survival share for females than males?"
+    },
+    {
+      "question_id": "titanic.q06.p0",
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the mean fare after removing fare outliers using the 1.5*IQR rule?"
+    },
+    {
+      "question_id": "titanic.q06.p1",
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Average the fares once 1.5-IQR outliers are dropped."
+    },
+    {
+      "question_id": "titanic.q06.p2",
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "What is the trimmed mean fare under the standard IQR outlier rule?"
+    },
+    {
+      "question_id": "titanic.q06.p3",
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Remove fare outliers (1.5 IQR) and report the mean fare."
+    },
+    {
+      "question_id": "titanic.q06.p4",
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "After IQR outlier removal, what is the average ticket fare?"
+    },
+    {
+      "question_id": "titanic.q07.p0",
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the median age of passengers (ignoring missing ages)?"
+    },
+    {
+      "question_id": "titanic.q07.p1",
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What is the median passenger age, excluding unknown ages?"
+    },
+    {
+      "question_id": "titanic.q07.p2",
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Among passengers with a recorded age, what is the median?"
+    },
+    {
+      "question_id": "titanic.q07.p3",
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Report the median age over non-missing age values."
+    },
+    {
+      "question_id": "titanic.q07.p4",
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What age is the 50th percentile of known ages?"
+    },
+    {
+      "question_id": "titanic.q08.p0",
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the mean fare for 1st-class passengers after removing fare outliers with the 1.5*IQR rule?"
+    },
+    {
+      "question_id": "titanic.q08.p1",
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "For first-class only, average the fares after 1.5-IQR outlier removal."
+    },
+    {
+      "question_id": "titanic.q08.p2",
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Mean class-1 fare, IQR outliers excluded \u2014 what is it?"
+    },
+    {
+      "question_id": "titanic.q08.p3",
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Among 1st-class passengers, what is the trimmed-mean fare (1.5 IQR)?"
+    },
+    {
+      "question_id": "titanic.q08.p4",
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Drop fare outliers (1.5 IQR), then report the first-class mean fare."
+    },
+    {
+      "question_id": "titanic.q09.p0",
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many female passengers survived?"
+    },
+    {
+      "question_id": "titanic.q09.p1",
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Count the women who survived."
+    },
+    {
+      "question_id": "titanic.q09.p2",
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many surviving passengers were female?"
+    },
+    {
+      "question_id": "titanic.q09.p3",
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "What is the number of female survivors?"
+    },
+    {
+      "question_id": "titanic.q09.p4",
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Among survivors, how many were women?"
+    },
+    {
+      "question_id": "titanic.q10.p0",
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "Among passengers older than 30 (known age), what is the survival rate of 1st-class passengers?"
+    },
+    {
+      "question_id": "titanic.q10.p1",
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "For over-30s with a known age, what share of first-class passengers survived?"
+    },
+    {
+      "question_id": "titanic.q10.p2",
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Restrict to known-age passengers above 30; among those in class 1, what is the survival rate?"
+    },
+    {
+      "question_id": "titanic.q10.p3",
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Survival proportion of 1st-class, over-30, known-age passengers?"
+    },
+    {
+      "question_id": "titanic.q10.p4",
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Take passengers aged over 30 with recorded age, then compute class-1 survival rate."
+    }
+  ],
+  "ground_truth": {
+    "titanic.q01": {
+      "template_id": "titanic.q01",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 0.362514,
+      "error": null
+    },
+    "titanic.q02": {
+      "template_id": "titanic.q02",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 891,
+      "error": null
+    },
+    "titanic.q03": {
+      "template_id": "titanic.q03",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "value": 224,
+      "error": null
+    },
+    "titanic.q04": {
+      "template_id": "titanic.q04",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "value": 1,
+      "error": null
+    },
+    "titanic.q05": {
+      "template_id": "titanic.q05",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "value": 0.426,
+      "error": null
+    },
+    "titanic.q06": {
+      "template_id": "titanic.q06",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 41.745435,
+      "error": null
+    },
+    "titanic.q07": {
+      "template_id": "titanic.q07",
+      "dataset": "titanic",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 29.2,
+      "error": null
+    },
+    "titanic.q08": {
+      "template_id": "titanic.q08",
+      "dataset": "titanic",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "value": 76.716931,
+      "error": null
+    },
+    "titanic.q09": {
+      "template_id": "titanic.q09",
+      "dataset": "titanic",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "value": 198,
+      "error": null
+    },
+    "titanic.q10": {
+      "template_id": "titanic.q10",
+      "dataset": "titanic",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "value": 0.555556,
+      "error": null
+    }
+  }
+}

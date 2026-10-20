@@ -1,0 +1,46 @@
+# Central experiment configuration — matches Table 3 "Key parameters" in the report.
+
+base_llm:
+  provider: ollama            # local open model
+  model: llama3.1             # override with env AGENTREL_MODEL
+  host: http://localhost:11434
+  temperature: 0.0
+  max_tokens: 1024
+  request_timeout_s: 120
+
+topologies:
+  - single_react              # matches ChatGPT / Claude single-agent loop
+  - orchestrator_worker       # matches LAMBDA programmer/inspector split
+  - peer_tool_graph           # closest to Data Interpreter
+
+datasets:
+  - titanic
+  - adult_census
+  - nyc_taxi
+  - missingness              # heavy-missingness table
+  - olist                    # multi-table e-commerce (needs joins)
+
+questions:
+  templates_per_dataset: 10
+  paraphrases_per_template: 4
+
+faults:                       # robustness study (later milestone)
+  - tool_failure              # a tool call returns an error / nothing
+  - corrupted_output          # an intermediate output is silently mutated
+  - dropped_context           # prior step's result is withheld from the model
+
+labelling:
+  numeric_tolerance: 0.01     # 1% relative tolerance (epsilon in Eq.1)
+  categorical: exact_match
+
+split:
+  scheme: grouped_by_template # all paraphrases of a question stay in one split
+  train: 0.70
+  val: 0.15
+  test: 0.15
+  seed: 42
+
+runtime:
+  max_agent_steps: 12         # hard cap on tool calls per run (timeout -> flagged, kept)
+  run_timeout_s: 300
+  log_dir: results

@@ -1,0 +1,637 @@
+{
+  "dataset": "adult_census",
+  "questions": [
+    {
+      "question_id": "adult.q01.p0",
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many individuals are in the dataset?"
+    },
+    {
+      "question_id": "adult.q01.p1",
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What is the total record count?"
+    },
+    {
+      "question_id": "adult.q01.p2",
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many rows are there?"
+    },
+    {
+      "question_id": "adult.q01.p3",
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Count the individuals in the table."
+    },
+    {
+      "question_id": "adult.q01.p4",
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the number of people recorded?"
+    },
+    {
+      "question_id": "adult.q02.p0",
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the mean age across all individuals?"
+    },
+    {
+      "question_id": "adult.q02.p1",
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What is the average age?"
+    },
+    {
+      "question_id": "adult.q02.p2",
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Report the mean of the age column."
+    },
+    {
+      "question_id": "adult.q02.p3",
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "On average, how old are the individuals?"
+    },
+    {
+      "question_id": "adult.q02.p4",
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the arithmetic mean age?"
+    },
+    {
+      "question_id": "adult.q03.p0",
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many individuals earn more than 50K (income '>50K')?"
+    },
+    {
+      "question_id": "adult.q03.p1",
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Count the people with income above 50K."
+    },
+    {
+      "question_id": "adult.q03.p2",
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many records have the high-income label?"
+    },
+    {
+      "question_id": "adult.q03.p3",
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "What is the number of individuals in the >50K bracket?"
+    },
+    {
+      "question_id": "adult.q03.p4",
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "How many earn over 50K per year?"
+    },
+    {
+      "question_id": "adult.q04.p0",
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the mean weekly hours worked?"
+    },
+    {
+      "question_id": "adult.q04.p1",
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "What is the average of hours_per_week?"
+    },
+    {
+      "question_id": "adult.q04.p2",
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "On average, how many hours are worked per week?"
+    },
+    {
+      "question_id": "adult.q04.p3",
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Report the mean weekly working hours."
+    },
+    {
+      "question_id": "adult.q04.p4",
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the mean hours-per-week value?"
+    },
+    {
+      "question_id": "adult.q05.p0",
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "Which education level has the highest share of >50K earners?"
+    },
+    {
+      "question_id": "adult.q05.p1",
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "For which education category is the high-income proportion greatest?"
+    },
+    {
+      "question_id": "adult.q05.p2",
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Which schooling level most often earns above 50K?"
+    },
+    {
+      "question_id": "adult.q05.p3",
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "By education, which has the top >50K rate?"
+    },
+    {
+      "question_id": "adult.q05.p4",
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Which education group has the largest fraction earning >50K?"
+    },
+    {
+      "question_id": "adult.q06.p0",
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the difference in mean age between the >50K and <=50K groups?"
+    },
+    {
+      "question_id": "adult.q06.p1",
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "How much older on average is the high-income group than the low-income one?"
+    },
+    {
+      "question_id": "adult.q06.p2",
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Mean age of >50K minus mean age of <=50K \u2014 what is it?"
+    },
+    {
+      "question_id": "adult.q06.p3",
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "By income bracket, what is the gap in average age?"
+    },
+    {
+      "question_id": "adult.q06.p4",
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What is the age difference between the two income groups, high minus low?"
+    },
+    {
+      "question_id": "adult.q07.p0",
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "How many individuals have more than 12 years of education (education_num > 12)?"
+    },
+    {
+      "question_id": "adult.q07.p1",
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Count records with education_num above 12."
+    },
+    {
+      "question_id": "adult.q07.p2",
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "How many people have education_num greater than 12?"
+    },
+    {
+      "question_id": "adult.q07.p3",
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "What is the number of individuals whose education-num exceeds 12?"
+    },
+    {
+      "question_id": "adult.q07.p4",
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Among all, how many have over 12 education-years?"
+    },
+    {
+      "question_id": "adult.q08.p0",
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the most common occupation?"
+    },
+    {
+      "question_id": "adult.q08.p1",
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Which occupation appears most frequently?"
+    },
+    {
+      "question_id": "adult.q08.p2",
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "What is the modal occupation?"
+    },
+    {
+      "question_id": "adult.q08.p3",
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Which job category is the most represented?"
+    },
+    {
+      "question_id": "adult.q08.p4",
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "What occupation has the highest count?"
+    },
+    {
+      "question_id": "adult.q09.p0",
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "What is the mean weekly hours after removing hours outliers with the 1.5*IQR rule?"
+    },
+    {
+      "question_id": "adult.q09.p1",
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "Average hours_per_week once 1.5-IQR outliers are dropped."
+    },
+    {
+      "question_id": "adult.q09.p2",
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Trimmed-mean weekly hours under the standard IQR rule?"
+    },
+    {
+      "question_id": "adult.q09.p3",
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "Remove hours outliers (1.5 IQR) and report mean weekly hours."
+    },
+    {
+      "question_id": "adult.q09.p4",
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "After IQR outlier removal, what is the average weekly hours?"
+    },
+    {
+      "question_id": "adult.q10.p0",
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 0,
+      "is_canonical": true,
+      "text": "Among individuals working more than 40 hours per week, what share earn >50K?"
+    },
+    {
+      "question_id": "adult.q10.p1",
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 1,
+      "is_canonical": false,
+      "text": "For people working over 40 weekly hours, what fraction are high-income?"
+    },
+    {
+      "question_id": "adult.q10.p2",
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 2,
+      "is_canonical": false,
+      "text": "Restrict to >40 hours/week; what is the >50K rate there?"
+    },
+    {
+      "question_id": "adult.q10.p3",
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 3,
+      "is_canonical": false,
+      "text": "High-income proportion among those working more than 40 hours weekly?"
+    },
+    {
+      "question_id": "adult.q10.p4",
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "n_tables": 1,
+      "paraphrase_index": 4,
+      "is_canonical": false,
+      "text": "Take individuals above 40 weekly hours, then compute the >50K share."
+    }
+  ],
+  "ground_truth": {
+    "adult.q01": {
+      "template_id": "adult.q01",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 6000,
+      "error": null
+    },
+    "adult.q02": {
+      "template_id": "adult.q02",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 52.916333,
+      "error": null
+    },
+    "adult.q03": {
+      "template_id": "adult.q03",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "value": 1232,
+      "error": null
+    },
+    "adult.q04": {
+      "template_id": "adult.q04",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 39.842667,
+      "error": null
+    },
+    "adult.q05": {
+      "template_id": "adult.q05",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "categorical",
+      "value": "11th",
+      "error": null
+    },
+    "adult.q06": {
+      "template_id": "adult.q06",
+      "dataset": "adult_census",
+      "kind": "group_comparison",
+      "answer_type": "numeric",
+      "value": 6.867085,
+      "error": null
+    },
+    "adult.q07": {
+      "template_id": "adult.q07",
+      "dataset": "adult_census",
+      "kind": "filtering",
+      "answer_type": "numeric",
+      "value": 1442,
+      "error": null
+    },
+    "adult.q08": {
+      "template_id": "adult.q08",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "categorical",
+      "value": "Craft-repair",
+      "error": null
+    },
+    "adult.q09": {
+      "template_id": "adult.q09",
+      "dataset": "adult_census",
+      "kind": "aggregation",
+      "answer_type": "numeric",
+      "value": 39.845598,
+      "error": null
+    },
+    "adult.q10": {
+      "template_id": "adult.q10",
+      "dataset": "adult_census",
+      "kind": "multi_step",
+      "answer_type": "numeric",
+      "value": 0.240542,
+      "error": null
+    }
+  }
+}
