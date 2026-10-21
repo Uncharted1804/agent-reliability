@@ -12,6 +12,20 @@ of them is accuracy:
               as a confidence score, so being right is not enough -- 0.8 has to
               mean 0.8.
 
+The final report adds metrics that answer the questions a deployment asks:
+
+    ROC-AUC            ranking quality, reported because readers expect it
+    MCC                one number using all four confusion cells; unlike F1 it
+                       is not inflated when the positive class is common
+    balanced accuracy  mean of recall on failures and on successes
+    ECE                expected calibration error over 10 equal-width bins:
+                       the average gap between predicted and observed rates
+    recall@k%          share of failures caught if an analyst re-checks only
+                       the k% highest-scored runs -- the review-budget view
+
+and template-clustered bootstrap CIs, since runs of one template are not
+independent.
+
 F2 needs a threshold, and the threshold is a free parameter, so it is chosen on
 the validation split only (`best_f2_threshold`) and then applied unchanged to
 test. Choosing it on test would report an optimistically biased F2.
@@ -19,8 +33,9 @@ test. Choosing it on test would report an optimistically biased F2.
 from __future__ import annotations
 
 import numpy as np
-from sklearn.metrics import (average_precision_score, brier_score_loss, fbeta_score,
-                             precision_score, recall_score)
+from sklearn.metrics import (average_precision_score, balanced_accuracy_score,
+                             brier_score_loss, fbeta_score, matthews_corrcoef,
+                             precision_score, recall_score, roc_auc_score)
 
 BETA = 2.0
 
@@ -71,6 +86,55 @@ def evaluate(y_true, y_prob, threshold: float) -> dict[str, float]:
         "n": int(len(y_true)),
         "positive_rate": float(y_true.mean()),
     }
+
+
+def expected_calibration_error(y_true, y_prob, bins: int = 10) -> float:
+    """Run-weighted mean |observed rate - mean p-hat| over equal-width bins."""
+    y_true = np.asarray(y_true, dtype=float)
+    y_prob = np.asarray(y_prob, dtype=float)
+    idx = np.minimum((y_prob * bins).astype(int), bins - 1)
+    return float(sum(abs(y_true[idx == b].mean() - y_prob[idx == b].mean()) * (idx == b).sum()
+                     for b in range(bins) if (idx == b).any()) / len(y_true))
+
+
+def recall_at_budget(y_true, y_prob, budget: float) -> float:
+    """Recall if only the top `budget` share of runs (by p-hat) is reviewed."""
+    y_true = np.asarray(y_true).astype(int)
+    k = round(budget * len(y_true))
+    top = np.argsort(-np.asarray(y_prob, dtype=float), kind="stable")[:k]
+    return float(y_true[top].sum() / y_true.sum()) if y_true.sum() else float("nan")
+
+
+def evaluate_extended(y_true, y_prob, threshold: float) -> dict[str, float]:
+    """evaluate() plus the deployment-facing metrics of the final report."""
+    y_true = np.asarray(y_true).astype(int)
+    y_prob = np.asarray(y_prob, dtype=float)
+    y_pred = (y_prob >= threshold).astype(int)
+    out = evaluate(y_true, y_prob, threshold)
+    out.update({
+        "roc_auc": float(roc_auc_score(y_true, y_prob)),
+        "mcc": float(matthews_corrcoef(y_true, y_pred)),
+        "balanced_accuracy": float(balanced_accuracy_score(y_true, y_pred)),
+        "ece": expected_calibration_error(y_true, y_prob),
+        **{f"recall_at_{k}pct": recall_at_budget(y_true, y_prob, k / 100) for k in (10, 20, 30)},
+    })
+    return out
+
+
+def grouped_bootstrap_ci(y_true, y_prob, groups, metric, *, n_resamples: int = 1000,
+                         seed: int = 42, level: float = 0.95) -> tuple[float, float]:
+    """Percentile CI for metric(y, p), resampling whole groups (templates)."""
+    y_true, y_prob, groups = (np.asarray(a) for a in (y_true, y_prob, groups))
+    members = {g: np.flatnonzero(groups == g) for g in np.unique(groups)}
+    keys = np.array(list(members))
+    rng = np.random.default_rng(seed)
+    stats = []
+    for _ in range(n_resamples):
+        idx = np.concatenate([members[g] for g in rng.choice(keys, len(keys))])
+        if 0 < y_true[idx].mean() < 1:   # a metric needs both classes
+            stats.append(metric(y_true[idx], y_prob[idx]))
+    alpha = (1 - level) / 2
+    return float(np.quantile(stats, alpha)), float(np.quantile(stats, 1 - alpha))
 
 
 def format_results(results: dict[str, dict[str, float]]) -> str:

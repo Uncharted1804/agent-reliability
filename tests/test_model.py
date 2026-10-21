@@ -354,3 +354,41 @@ def test_training_refuses_a_single_class_corpus(tmp_path, stub_static):
     labels.to_parquet(tmp_path / "labelled.parquet", index=False)
     with pytest.raises(ValueError, match="single class"):
         train_and_evaluate(runs_path, SPLIT_CFG)
+
+
+# --- extended metrics (final report) ---------------------------------------- #
+def test_ece_is_zero_for_perfect_calibration_and_large_when_overconfident():
+    from agentrel.model.metrics import expected_calibration_error
+    y = np.array([0, 1] * 50)
+    assert expected_calibration_error(y, np.full(100, 0.5)) == pytest.approx(0.0)
+    assert expected_calibration_error(y, np.where(y == 1, 0.05, 0.95)) > 0.8
+
+
+def test_recall_at_budget_reviews_the_top_scored_runs():
+    from agentrel.model.metrics import recall_at_budget
+    y = np.array([1, 1, 0, 0, 0, 0, 0, 0, 0, 1])
+    p = np.array([.9, .8, .7, .1, .1, .1, .1, .1, .1, .2])
+    assert recall_at_budget(y, p, 0.2) == pytest.approx(2 / 3)   # top 2 of 10 runs
+    assert recall_at_budget(y, p, 1.0) == pytest.approx(1.0)
+
+
+def test_evaluate_extended_reports_threshold_free_and_threshold_metrics():
+    from agentrel.model.metrics import evaluate_extended
+    rng = np.random.default_rng(0)
+    y = rng.integers(0, 2, 200)
+    p = np.clip(y * 0.6 + rng.random(200) * 0.4, 0, 1)
+    m = evaluate_extended(y, p, threshold=0.5)
+    for k in ("roc_auc", "pr_auc", "mcc", "balanced_accuracy", "ece", "brier",
+              "recall_at_10pct", "recall_at_20pct", "recall_at_30pct", "f2"):
+        assert k in m
+    assert m["roc_auc"] > 0.9 and m["mcc"] > 0.5
+
+
+def test_grouped_bootstrap_ci_brackets_the_point_estimate():
+    from agentrel.model.metrics import grouped_bootstrap_ci, pr_auc
+    rng = np.random.default_rng(1)
+    groups = np.repeat(np.arange(40), 5)
+    y = rng.integers(0, 2, 200)
+    p = np.clip(y * 0.3 + rng.random(200) * 0.7, 0, 1)   # overlapping classes
+    lo, hi = grouped_bootstrap_ci(y, p, groups, pr_auc, n_resamples=300)
+    assert lo < pr_auc(y, p) < hi and 0 <= lo < hi <= 1
