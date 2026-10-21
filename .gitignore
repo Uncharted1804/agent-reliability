@@ -31,3 +31,6 @@ results/*
 Thumbs.db
 .idea/
 .vscode/
+
+# Report and viva notes (kept out of the repo)
+*.pdf
