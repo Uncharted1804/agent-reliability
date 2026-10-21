@@ -177,24 +177,32 @@ _MAX_LEVELS = 8
 
 
 def schema_digest(session: Session, max_cols: int = 40) -> str:
-    """Compact, deterministic description of the session's tables."""
+    """Compact, deterministic description of the session's tables.
+
+    Strictly qualitative about quantities. An earlier version printed the row
+    count, each column's missing rate and its distinct-value count, which are
+    the literal answers to the count and missing-rate templates: six templates
+    could be answered straight off the preamble, and they failed at 23%
+    against 47% for the rest. A column is now reported as *having* missing
+    values, never how many -- the number has to come from a tool call.
+    """
     lines: list[str] = []
     for name, df in session.tables.items():
-        lines.append(f"table {name}: {len(df)} rows, {len(df.columns)} columns")
+        lines.append(f"table {name}: columns {list(df.columns)[:max_cols]}")
         for col in list(df.columns)[:max_cols]:
             s = df[col]
-            dtype = str(s.dtype)
-            miss = float(s.isna().mean())
-            desc = f"  - {col} ({dtype}"
-            if miss > 0:
-                desc += f", {miss:.0%} missing"
+            desc = f"  - {col} ({s.dtype}"
+            if bool(s.isna().any()):
+                desc += ", has missing values"
             if pd.api.types.is_string_dtype(s) or isinstance(s.dtype, pd.CategoricalDtype):
                 levels = s.dropna().unique()
+                # the level names are the option set a filter needs; the count
+                # of them is itself a cardinality answer, so it is withheld
                 if len(levels) <= _MAX_LEVELS:
                     desc += f", values: {sorted(map(str, levels))}"
                 else:
-                    desc += f", {len(levels)} distinct"
+                    desc += ", many distinct values"
             lines.append(desc + ")")
         if len(df.columns) > max_cols:
-            lines.append(f"  ... {len(df.columns) - max_cols} more columns")
+            lines.append("  ... and further columns")
     return "\n".join(lines)
