@@ -49,23 +49,27 @@ agent-reliability/
 │   ├── features/        # static / dynamic / graph feature engineering
 │   ├── model/           # split, pipelines, metrics, classifier training
 │   ├── faults/          # fault injection + robustness ΔT,f
+│   ├── relate.py        # block G: predictor vs robustness
 │   └── utils/           # config, io, logging helpers
 ├── datasets/            # downloaded raw data (gitignored) + question banks
 ├── configs/             # experiment config (topologies, faults, splits)
-├── scripts/             # entry points: download, generate, label
-├── tests/               # sanity tests for the data + labelling layer
-└── results/             # run corpus, labels (gitignored)
+├── scripts/             # entry points: download, generate, label, train, faults, relate, figures
+├── report/              # build.py + findings.json -> final_report.pdf
+├── tests/               # unit tests for every block
+└── results/             # corpora, labels, tables, figures (gitignored)
 ```
 
-## Status — Milestone 2
+## Status — complete
 
-Implemented: everything in Milestone 1, plus
+All seven blocks of the report's workflow are implemented and have been run end to end; results are below. Built on top of Milestone 1:
 
 * **feature engineering** (`features/`) — static (data + question), dynamic (trace), and graph features from the tool-interaction graph G=(V,E). The names in `features/schema.py` are the contract; each block asserts it produced exactly those keys.
 * **silent-failure classifier** (`model/`) — class-weighted LightGBM with logistic-regression, SMOTE+LR, SMOTE+LightGBM and prior-dummy baselines, on the grouped-by-template 70/15/15 split. Reports F2 / PR-AUC / Brier, with the F2 threshold chosen on validation and frozen for test.
 * **fault injection + robustness** (`faults/`) — `tool_failure`, `corrupted_output`, `dropped_context`, and Δ_T,f with cluster-bootstrap CIs (1000 resamples, resampled over templates).
 
-Not yet: the step-(G) analysis linking predictor outputs to robustness.
+* **relating the two** (`relate.py`, block G) — out-of-fold failure probabilities from grouped 5-fold CV, PR-AUC per topology, per-topology feature drivers, and the baseline-trained predictor scored on the fault-injected runs.
+* **a quantile operation** for the tools, without which the three 1.5×IQR templates could not be answered by any agent.
+* **report pipeline** — `scripts/figures.py` and `report/build.py` turn `results/` into `report/final_report.pdf`.
 
 ### Methodology notes
 
@@ -79,7 +83,7 @@ Three choices are worth knowing before reading any number this produces:
 
 `expand_questions` emits the canonical phrasing *plus* 4 paraphrases, which is why the table above counts 5 phrasings per template and 750 base runs. An earlier draft of that table said 600, counting the paraphrases only and omitting the canonical phrasing.
 
-Fault runs are scaled by `fault_runs.paraphrases_per_template` in `configs/experiment.yaml` (default 1 = canonical phrasing only → 450 runs). A run costs ~15 s against a CPU-served local model, so the full 750 × 3 design is ~10 h; the default keeps every template and topology represented at a third of the cost. Set it to 5 to reproduce the full design.
+Fault runs are scaled by `fault_runs.paraphrases_per_template` in `configs/experiment.yaml` (default 1 = canonical phrasing only → 450 runs). The default keeps every template and topology represented at a third of the cost of the full 750 × 3 design; set it to 5 to reproduce that.
 
 ## Quick start
 
@@ -91,14 +95,15 @@ py -3.11 -m venv .venv && .venv\Scripts\activate
 # Linux / macOS
 python3 -m venv .venv && source .venv/bin/activate
 
-pip install -e ".[model,dev]"        # model extras: lightgbm, imbalanced-learn
+pip install -e ".[model,dev,report]" # model: lightgbm, imbalanced-learn; report: reportlab
 
 # 1. fetch datasets + build question banks
 python scripts/download_datasets.py
 python scripts/build_question_banks.py
 
-# 2. (needs a local model served by Ollama, e.g. `ollama pull llama3.1`)
-python scripts/generate_runs.py --config configs/experiment.yaml --limit 4   # smoke test
+# 2. corpus (needs Ollama: `ollama pull qwen3:8b`)
+python scripts/generate_runs.py --no-mock --limit 4 --out results/smoke.jsonl   # smoke test
+python scripts/generate_runs.py --no-mock                                        # 750 runs, ~1.7 h on an M3
 python scripts/label_runs.py --runs results/runs.jsonl
 
 # 3. classifier (block D)
@@ -108,12 +113,28 @@ python scripts/train_classifier.py --runs results/runs.jsonl
 python scripts/generate_fault_runs.py --no-mock
 python scripts/label_runs.py --runs results/runs_faults.jsonl
 python scripts/robustness.py
+
+# 5. relate the two (block G), figures, final report
+python scripts/relate.py
+python scripts/figures.py
+python report/build.py                  # -> report/final_report.pdf
 ```
 
-`make all` runs the whole chain; `make test` runs the suite. Pass `--no-mock` to
+`make all` runs the whole chain (~3 h on an M3), `make report` builds the figures and the PDF, `make test` runs the suite. Pass `--no-mock` to
 the generators to fail loudly instead of falling back to `MockLLM` — worth doing
 whenever the numbers are meant to be real.
 
 ## Base LLM
 
-The harness targets a **local open model via Ollama** (default `llama3.1`, temperature 0), matching the report's "one fixed low-cost model". Set `AGENTREL_MODEL` to override. No cloud API key required.
+The harness targets a **local open model via Ollama**, temperature 0, matching the report's "one fixed low-cost model". No cloud API key required; set `AGENTREL_MODEL` to override.
+
+The model is **`qwen3:8b` with thinking off**, picked by benchmarking four local models on the canonical phrasing of every template × 3 topologies (150 runs each; `generate_runs.py --canonical-only` reproduces the design):
+
+| model | failure rate | hit the 12-step cap | used no tool | s / run |
+|---|---|---|---|---|
+| llama3 (8B) | 59% | 7% | 39% | 14 |
+| llama3.1:8b | 44% | 24% | 1% | 28 |
+| qwen2.5:7b | 54% | 5% | 4% | 30 |
+| **qwen3:8b, thinking off** | 48% | 11% | 2% | 17 |
+
+Scored on the 41 templates unaffected by two harness issues found during the benchmark (a leaky schema preamble and the missing quantile op, both since fixed). llama3.1 and qwen3 are tied within noise; qwen3 is ~40% faster and loops half as often. llama3 as a single ReAct agent never calls a tool and fails 90% of the time. Run one model at a time: two 8B models on a 16 GB machine evict each other from memory on every request.
