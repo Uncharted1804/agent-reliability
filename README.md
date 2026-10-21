@@ -30,10 +30,11 @@ Question templates ├─► (A) Agent-run generator ─► (B) Labelling + ─�
 |---|---|
 | datasets | 5 |
 | question templates / dataset | 10 |
-| paraphrases / template | 4 |
+| phrasings / template | 5 (canonical + 4 paraphrases) |
 | topologies | 3 |
-| **base runs** | **5 × 10 × 4 × 3 = 600** |
-| fault-injected runs | 600 × 3 = 1,800 |
+| **base runs** | **5 × 10 × 5 × 3 = 750** |
+| fault-injected runs (full design) | 750 × 3 = 2,250 |
+| fault-injected runs (default scale) | 450 — canonical phrasing only, see below |
 
 ## Repository layout
 
@@ -76,15 +77,21 @@ Three choices are worth knowing before reading any number this produces:
 
 ### Corpus actually generated
 
-`expand_questions` emits the canonical phrasing *plus* 4 paraphrases, so the base corpus is 5 datasets × 10 templates × 5 phrasings × 3 topologies = **750 runs**, not the 600 in the table above (which counts paraphrases only).
+`expand_questions` emits the canonical phrasing *plus* 4 paraphrases, which is why the table above counts 5 phrasings per template and 750 base runs. An earlier draft of that table said 600, counting the paraphrases only and omitting the canonical phrasing.
 
 Fault runs are scaled by `fault_runs.paraphrases_per_template` in `configs/experiment.yaml` (default 1 = canonical phrasing only → 450 runs). A run costs ~15 s against a CPU-served local model, so the full 750 × 3 design is ~10 h; the default keeps every template and topology represented at a third of the cost. Set it to 5 to reproduce the full design.
 
 ## Quick start
 
 ```bash
-python -m venv .venv && source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -e .
+# Windows (use the py launcher and pin the version -- a venv created from a
+# WSL shell inside a Windows checkout yields a .venv whose python cannot run)
+py -3.11 -m venv .venv && .venv\Scripts\activate
+
+# Linux / macOS
+python3 -m venv .venv && source .venv/bin/activate
+
+pip install -e ".[model,dev]"        # model extras: lightgbm, imbalanced-learn
 
 # 1. fetch datasets + build question banks
 python scripts/download_datasets.py
