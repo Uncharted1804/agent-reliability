@@ -390,7 +390,7 @@ algorithm("Algorithm 2  Train the silent-failure gate (blocks C, D)", [
     "4  θ ← argmax_t F2(y_val, 1[f(x_val) ≥ t])    ▷ chosen on validation, then frozen",
     "5  report F2, PR-AUC, Brier, ROC-AUC, MCC, ECE, recall@budget on test at θ",
 ])
-algorithm("Algorithm 3  Gate an answer before it is shown (deployment)", [
+algorithm("Algorithm 3  Gate an answer before it is shown (deployment; scripts/gate.py)", [
     "Input:  a finished run τ, gate (f, θ), optional review budget k",
     "1  p̂ ← f(φ(τ))",
     "2  if p̂ ≥ θ then hold the answer and send the run for review   ▷ likely silent failure",
@@ -436,6 +436,8 @@ table([
     ["G. Relate", "both corpora, robustness", ("out-of-fold p̂, per-topology PR-AUC, drivers, gate recall "
      "on fault runs"), "relate_*.csv, oof_predictions.csv", ("folds grouped by template; topology only selects "
      "rows")],
+    ["Gate", "labelled corpus", "fit f on every run; θ from out-of-fold F2; then hold or release new "
+     "runs (Algorithm 3)", "gate.joblib", "threshold set on out-of-fold scores, never on the model's own fit"],
     ["Report", "results/", "figures and this PDF; extended metrics from saved predictions", "Shaurya_Pragun_FDS_Project_Report.pdf",
      "every number read from results, none typed by hand"],
 ], [21 * mm, 24 * mm, 49 * mm, 29 * mm, 51 * mm], caption="<b>Table 2.</b> Stages, artifacts and guards.")

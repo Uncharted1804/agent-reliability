@@ -68,6 +68,7 @@ All seven blocks of the report's workflow are implemented and have been run end 
 * **fault injection + robustness** (`faults/`) — `tool_failure`, `corrupted_output`, `dropped_context`, and Δ_T,f with cluster-bootstrap CIs (1000 resamples, resampled over templates).
 
 * **relating the two** (`relate.py`, block G) — out-of-fold failure probabilities from grouped 5-fold CV, PR-AUC per topology, per-topology feature drivers, and the baseline-trained predictor scored on the fault-injected runs.
+* **the silent-failure gate** (`gate.py`, `scripts/gate.py`) — the classifier as a deployable step: fit once on the labelled corpus, then score new runs from their traces alone and hold the likely silent failures for review, by threshold or by a fixed review budget.
 * **a quantile operation** for the tools, without which the three 1.5×IQR templates could not be answered by any agent.
 * **report pipeline** — `scripts/figures.py` and `report/build.py` turn `results/` into `Shaurya_Pragun_FDS_Project_Report.pdf`.
 
@@ -114,8 +115,10 @@ python scripts/generate_fault_runs.py --no-mock
 python scripts/label_runs.py --runs results/runs_faults.jsonl
 python scripts/robustness.py
 
-# 5. relate the two (block G), figures, final report
+# 5. relate the two (block G), the deployable gate, figures, final report
 python scripts/relate.py
+python scripts/gate.py fit                                   # -> results/gate.joblib
+python scripts/gate.py score --runs new_runs.jsonl --budget 0.2   # hold or release new answers
 python scripts/figures.py
 python report/build.py                  # -> Shaurya_Pragun_FDS_Project_Report.pdf
 ```
