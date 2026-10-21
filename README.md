@@ -54,7 +54,7 @@ agent-reliability/
 ├── datasets/            # downloaded raw data (gitignored) + question banks
 ├── configs/             # experiment config (topologies, faults, splits)
 ├── scripts/             # entry points: download, generate, label, train, faults, relate, figures
-├── report/              # build.py + findings.json -> final_report.pdf
+├── report/              # build.py + findings.json -> ../Shaurya_Pragun_FDS_Project_Report.pdf
 ├── tests/               # unit tests for every block
 └── results/             # corpora, labels, tables, figures (gitignored)
 ```
@@ -69,7 +69,7 @@ All seven blocks of the report's workflow are implemented and have been run end 
 
 * **relating the two** (`relate.py`, block G) — out-of-fold failure probabilities from grouped 5-fold CV, PR-AUC per topology, per-topology feature drivers, and the baseline-trained predictor scored on the fault-injected runs.
 * **a quantile operation** for the tools, without which the three 1.5×IQR templates could not be answered by any agent.
-* **report pipeline** — `scripts/figures.py` and `report/build.py` turn `results/` into `report/final_report.pdf`.
+* **report pipeline** — `scripts/figures.py` and `report/build.py` turn `results/` into `Shaurya_Pragun_FDS_Project_Report.pdf`.
 
 ### Methodology notes
 
@@ -117,7 +117,7 @@ python scripts/robustness.py
 # 5. relate the two (block G), figures, final report
 python scripts/relate.py
 python scripts/figures.py
-python report/build.py                  # -> report/final_report.pdf
+python report/build.py                  # -> Shaurya_Pragun_FDS_Project_Report.pdf
 ```
 
 `make all` runs the whole chain (~3 h on an M3), `make report` builds the figures and the PDF, `make test` runs the suite. Pass `--no-mock` to

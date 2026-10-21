@@ -26,10 +26,10 @@ make smoke                                  # 2 questions/dataset end to end, Mo
 python scripts/generate_runs.py --limit 2 --no-mock --out results/live.jsonl
 python scripts/label_runs.py --runs results/live.jsonl
 AGENTREL_MODEL=llama3.1:8b python scripts/generate_runs.py --canonical-only --no-mock --out results/bench_llama3.1.jsonl   # model benchmark design
-make relate figures report                  # block G, figures, report/final_report.pdf
+make relate figures report                  # block G, figures, Shaurya_Pragun_FDS_Project_Report.pdf
 ```
 
-`make all` runs the full chain: runs → label → train → faults → label-faults → robustness → relate (~3h on an M3 with qwen3:8b; ~8 s a baseline run). `make report` then draws `results/figures/` and builds `report/final_report.pdf`; its interpretive prose lives in `report/findings.json` and must be re-checked by hand whenever the numbers change. Linting: `ruff` (dev dependency, no config beyond defaults).
+`make all` runs the full chain: runs → label → train → faults → label-faults → robustness → relate (~3h on an M3 with qwen3:8b; ~8 s a baseline run). `make report` then draws `results/figures/` and builds `Shaurya_Pragun_FDS_Project_Report.pdf`; its interpretive prose lives in `report/findings.json` and must be re-checked by hand whenever the numbers change. Linting: `ruff` (dev dependency, no config beyond defaults).
 
 ## LLM backend
 

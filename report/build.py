@@ -1,6 +1,6 @@
 """Build the final project report PDF from the results/ tables and figures.
 
-    python report/build.py                      # -> report/final_report.pdf
+    python report/build.py                      # -> Shaurya_Pragun_FDS_Project_Report.pdf
     python report/build.py out.pdf results_dir  # another corpus
 
 Every number in the results sections is read from results/ (the extended
@@ -45,7 +45,7 @@ from agentrel.model.metrics import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "report" / "final_report.pdf"
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "Shaurya_Pragun_FDS_Project_Report.pdf"
 RES = Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "results"
 FIG = RES / "figures"
 
@@ -436,7 +436,7 @@ table([
     ["G. Relate", "both corpora, robustness", ("out-of-fold p̂, per-topology PR-AUC, drivers, gate recall "
      "on fault runs"), "relate_*.csv, oof_predictions.csv", ("folds grouped by template; topology only selects "
      "rows")],
-    ["Report", "results/", "figures and this PDF; extended metrics from saved predictions", "final_report.pdf",
+    ["Report", "results/", "figures and this PDF; extended metrics from saved predictions", "Shaurya_Pragun_FDS_Project_Report.pdf",
      "every number read from results, none typed by hand"],
 ], [21 * mm, 24 * mm, 49 * mm, 29 * mm, 51 * mm], caption="<b>Table 2.</b> Stages, artifacts and guards.")
 
