@@ -47,6 +47,7 @@ Local Ollama only (`configs/experiment.yaml` → `base_llm`, override model with
 - The F2 threshold is chosen on validation and frozen for test.
 - Labelling a non-baseline corpus writes `<stem>_labelled.parquet`; never let it overwrite `results/labelled.parquet`.
 
-## Known open issue
+## Known open issues
 
-`schema_digest()` (shown to every agent) includes row counts and missing-rate percentages, which leaks the answer for count and missing-rate templates.
+- **No tool can compute quantiles**, so the three 1.5*IQR templates (titanic.q08, adult.q09, nyc.q10) cannot be answered through the tools by any model; they fail for every model and topology. Either add a quantile op to `agents/tools.py` (and `ACTION_PROTOCOL`) or drop them from reported figures.
+- `schema_digest()` is deliberately qualitative (no row counts, missing rates or distinct counts): a number shown in the preamble is an answer the agent never has to compute. Runs generated before commit 7e5b5b8 used the leaky preamble; exclude titanic.q02, adult.q01, nyc.q02, nyc.q05, olist.q01 and miss.q01 from figures built on them.
