@@ -99,6 +99,49 @@ def pr_curves(res: Path, out: Path) -> None:
     fig.savefig(out / "pr_curves.png")
 
 
+def calibration(res: Path, out: Path) -> None:
+    """Reliability diagram: observed silent-failure rate per bin of p-hat."""
+    o = pd.read_csv(res / "oof_predictions.csv")
+    o["bin"] = (o["p_failure_oof"] * 10).astype(int).clip(upper=9)
+    g = o.groupby("bin").agg(p=("p_failure_oof", "mean"), obs=("label_failure", "mean"),
+                             n=("label_failure", "size"))
+    fig, ax = plt.subplots(figsize=(3.6, 3.4))
+    ax.plot([0, 1], [0, 1], color=MUTED, linewidth=1, linestyle=":")
+    ax.plot(g["p"], g["obs"], "-o", color="#2a78d6", linewidth=2, markersize=6,
+            markeredgecolor="#fcfcfb", markeredgewidth=1.5)
+    for _, r in g.iterrows():
+        ax.annotate(f"{int(r['n'])}", (r["p"], r["obs"]), textcoords="offset points",
+                    xytext=(5, -10), fontsize=7, color=MUTED)
+    ax.set(xlim=(0, 1), ylim=(0, 1), xlabel="Predicted P(silent failure)",
+           ylabel="Observed silent-failure rate")
+    ax.text(0.02, 0.93, "dotted: perfect calibration; labels: runs per bin",
+            transform=ax.transAxes, color=MUTED, fontsize=7.5)
+    fig.savefig(out / "calibration.png")
+
+
+def review_budget(res: Path, out: Path) -> None:
+    """Share of silent failures caught when only the top-k% of runs is re-checked."""
+    o = pd.read_csv(res / "oof_predictions.csv").sort_values("p_failure_oof", ascending=False)
+    caught = o["label_failure"].cumsum().to_numpy() / o["label_failure"].sum()
+    share = [(i + 1) / len(o) for i in range(len(o))]
+    rate = o["label_failure"].mean()
+    fig, ax = plt.subplots(figsize=(4.2, 3.2))
+    ax.plot(share, share, color=MUTED, linewidth=1, linestyle=":", label="Random order")
+    ax.plot(share, [min(1.0, s / rate) for s in share], color=MUTED, linewidth=1,
+            linestyle="--", label="Perfect ranking")
+    ax.plot(share, caught, color="#2a78d6", linewidth=2, label="Ranked by p-hat")
+    for k in (0.1, 0.2, 0.3):
+        v = caught[max(0, round(k * len(o)) - 1)]
+        ax.plot(k, v, "o", color="#2a78d6", markersize=6, markeredgecolor="#fcfcfb")
+        ax.annotate(f"{v:.0%}", (k, v), textcoords="offset points", xytext=(4, -12), fontsize=7.5)
+    ax.set(xlim=(0, 1), ylim=(0, 1.02), xlabel="Share of runs re-checked by an analyst",
+           ylabel="Share of silent failures caught")
+    ax.xaxis.set_major_formatter(lambda v, _: f"{v:.0%}")
+    ax.yaxis.set_major_formatter(lambda v, _: f"{v:.0%}")
+    ax.legend(frameon=False, loc="lower right")
+    fig.savefig(out / "review_budget.png")
+
+
 def importance(res: Path, out: Path) -> None:
     imp = pd.read_csv(res / "feature_importance.csv").head(10)[::-1]
     fig, ax = plt.subplots(figsize=(5.0, 3.0))
@@ -116,7 +159,8 @@ def main() -> None:
     res = Path(args.results)
     out = res / "figures"
     out.mkdir(parents=True, exist_ok=True)
-    for fig in (failure_by_dataset, robustness, fault_recall, pr_curves, importance):
+    for fig in (failure_by_dataset, robustness, fault_recall, pr_curves, importance,
+                calibration, review_budget):
         fig(res, out)
         plt.close("all")
         print(f"wrote {out / fig.__name__}")
