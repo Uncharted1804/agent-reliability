@@ -8,7 +8,9 @@ from __future__ import annotations
 
 import re
 
-_NUM_RE = re.compile(r"[-+]?\d{1,3}(?:,\d{3})*(?:\.\d+)?|[-+]?\d+(?:\.\d+)?")
+# the separator branch needs at least one ",ddd" group; with `*` it matched
+# 1-3 bare digits and split "32561" into "325" + "61"
+_NUM_RE = re.compile(r"[-+]?\d{1,3}(?:,\d{3})+(?:\.\d+)?|[-+]?\d+(?:\.\d+)?")
 _PCT_RE = re.compile(r"([-+]?\d+(?:\.\d+)?)\s*%")
 
 

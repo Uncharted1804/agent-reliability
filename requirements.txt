@@ -5,6 +5,7 @@ pyyaml>=6.0
 requests>=2.31
 scikit-learn>=1.3
 networkx>=3.1
+pyarrow>=14
 
 # Modelling layer (later milestone)
 lightgbm>=4.0

@@ -29,6 +29,13 @@ def test_parse_handles_thousands_separator():
     assert parse_numeric("total is 12,345") == 12345.0
 
 
+def test_parse_integer_without_separator():
+    # seen live: "32561" parsed as 61 and "2000" as 0, mislabelling correct runs
+    assert parse_numeric("32561") == 32561.0
+    assert parse_numeric("2000") == 2000.0
+    assert parse_numeric("-1500.25") == -1500.25
+
+
 def test_parse_none_on_empty():
     assert parse_numeric("") is None
     assert parse_numeric(None) is None
