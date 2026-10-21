@@ -28,6 +28,9 @@ model = [
     "imbalanced-learn>=0.11",
     "matplotlib>=3.7",
 ]
+report = [
+    "reportlab>=4.0",           # report/build.py renders the final report PDF
+]
 dev = [
     "pytest>=7.4",
     "ruff>=0.1",
