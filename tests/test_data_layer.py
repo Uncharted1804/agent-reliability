@@ -38,3 +38,12 @@ def test_answer_types_valid():
         assert tpl.answer_type in ("numeric", "categorical")
         assert tpl.kind in ("aggregation", "filtering", "group_comparison",
                             "trend", "multi_step")
+
+
+def test_canonical_only_keeps_one_phrasing_per_template():
+    from agentrel.harness.generator import select_questions
+    bank = {"questions": [{"question_id": f"t.q{t}.p{p}", "paraphrase_index": p}
+                          for t in range(3) for p in range(5)]}
+    assert len(select_questions(bank)) == 15
+    assert [q["paraphrase_index"] for q in select_questions(bank, canonical_only=True)] == [0, 0, 0]
+    assert len(select_questions(bank, limit=4)) == 4

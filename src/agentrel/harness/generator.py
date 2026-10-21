@@ -29,8 +29,19 @@ def _load_bank(dataset: str) -> dict:
     return json.loads(path.read_text())
 
 
+def select_questions(bank: dict, *, limit: int | None = None,
+                     canonical_only: bool = False) -> list[dict]:
+    """Questions to run. canonical_only keeps one phrasing per template, the
+    design of the model benchmark (50 templates x 3 topologies = 150 runs)."""
+    questions = bank["questions"]
+    if canonical_only:
+        questions = [q for q in questions if q["paraphrase_index"] == 0]
+    return questions[:limit] if limit else questions
+
+
 def generate(cfg: Config, *, out_path: str | Path | None = None,
-             limit: int | None = None, allow_mock: bool = True) -> Path:
+             limit: int | None = None, allow_mock: bool = True,
+             canonical_only: bool = False) -> Path:
     out_path = Path(out_path) if out_path else cfg.log_dir / "runs.jsonl"
     if out_path.exists():
         out_path.unlink()  # fresh corpus
@@ -50,10 +61,7 @@ def generate(cfg: Config, *, out_path: str | Path | None = None,
     for dataset in cfg.datasets:
         bank = _load_bank(dataset)
         tables = load_tables(dataset)
-        questions = bank["questions"]
-        if limit:
-            questions = questions[:limit]
-        for q in questions:
+        for q in select_questions(bank, limit=limit, canonical_only=canonical_only):
             for topo_name in cfg.topologies:
                 run_id = f"{q['question_id']}::{topo_name}"
                 trace = RunTrace(
