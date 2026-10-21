@@ -77,20 +77,50 @@ def test_unknown_object_is_not_a_tool_call():
 
 
 # --- schema digest --------------------------------------------------------- #
-def test_digest_reports_shape_and_dtypes():
+def test_digest_names_tables_columns_and_dtypes():
     text = schema_digest(_session())
-    assert "main: 3 rows, 3 columns" in text
+    assert "table main: columns ['age', 'sex', 'paid']" in text
     assert "age (float64" in text
 
 
-def test_digest_reports_missing_rate_and_low_cardinality_values():
+def test_digest_flags_missingness_without_quantifying_it():
+    # the missing RATE is the answer to the missing-rate templates, so the
+    # agent is told only that the column has gaps
     text = schema_digest(_session())
-    assert "33% missing" in text                     # one of three ages absent
-    assert "values: ['female', 'male']" in text      # agent needs the labels to filter
+    assert "has missing values" in text
+    assert "33%" not in text and "% missing" not in text
+
+
+def test_digest_gives_level_names_but_not_their_count():
+    # the names are the option set a filter needs; the count is a cardinality answer
+    text = schema_digest(_session())
+    assert "values: ['female', 'male']" in text
+    assert "distinct" not in text
 
 
 def test_digest_omits_missing_note_for_complete_column():
     assert "paid (int64)" in schema_digest(_session())
+
+
+def test_digest_states_no_row_count():
+    # the row count is the literal answer to the count templates
+    text = schema_digest(_session())
+    assert "3 rows" not in text
+    assert "rows" not in text
+
+
+def test_digest_leaks_no_aggregate_of_the_data():
+    """Regression: no quantity derived from the values may appear.
+
+    Six templates were previously answerable straight off the preamble
+    because it printed the row count, the missing rate and the distinct
+    count. Any number in the digest is now a dtype artefact at most.
+    """
+    import re
+    text = schema_digest(_session())
+    numbers = {n for n in re.findall(r"(?<![\w.])(\d+)(?![\w.])", text)}
+    # 3 rows, 2 non-null ages, 1 missing age, 2 sex levels, 2 paid -- none may show
+    assert numbers.isdisjoint({"3", "1", "2"}), f"quantities leaked: {numbers}"
 
 
 def test_initial_history_carries_schema_and_question_but_not_answers():
@@ -99,6 +129,6 @@ def test_initial_history_carries_schema_and_question_but_not_answers():
                      question_text="What fraction paid?")
     text = initial_history(trace, _session())
     assert "What fraction paid?" in text
-    assert "main: 3 rows" in text
+    assert "table main: columns" in text
     # descriptive only: no computed aggregate leaks into the preamble
     assert "0.66" not in text
