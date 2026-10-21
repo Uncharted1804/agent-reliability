@@ -86,6 +86,28 @@ Three choices are worth knowing before reading any number this produces:
 
 Fault runs are scaled by `fault_runs.paraphrases_per_template` in `configs/experiment.yaml` (default 1 = canonical phrasing only → 450 runs). The default keeps every template and topology represented at a third of the cost of the full 750 × 3 design; set it to 5 to reproduce that.
 
+## Results
+
+From the full run on `qwen3:8b` (750 baseline runs, 450 fault-injected). The report, `Shaurya_Pragun_FDS_Project_Report.pdf`, has the tables, intervals and figures.
+
+**Silent failure is the common case.** 297 of 750 runs failed (39.6%): single ReAct 36%, peer tool-graph 40%, orchestrator-worker 42%. 251 of those 297 (85%) returned a clean, well-formed wrong answer; only 46 gave no usable answer, so a monitor that watches for errors sees about one failure in six. The multi-agent topologies fail more silently: 90% of orchestrator-worker failures and 88% of peer failures are silent, against 75% for single ReAct, which more often runs into the 12-step cap.
+
+**The trace predicts it (Q1).** On the held-out test fold (105 runs, 7 unseen templates, 30% failure rate) the class-weighted LightGBM gets PR-AUC 0.63, against 0.45 for logistic regression and 0.30 for chance. Out of fold over all 750 runs: PR-AUC 0.70 (95% CI 0.52-0.83, templates resampled) at a 0.40 base rate, ROC-AUC 0.77. Used as a review queue, re-checking the top 20% of runs by score catches 40% of all failures; random review catches 20%. The signal is trace effort: tool calls, prompt and completion tokens and wall time carry most of the gain.
+
+Two caveats the numbers need. At a 30-40% failure rate the F2-optimal threshold flags most runs (θ = 0.11 on validation, 0.04 out of fold), and flagging everything already scores F2 0.68, so F2 alone does not show the gate works; PR-AUC and recall at a review budget do. And p̂ is not calibrated (ECE 0.16, Brier equal to the prior dummy), so read it as a ranking, not a probability.
+
+**Topologies under faults (Q2).** All nine topology × fault cells degrade, every 95% CI excluding zero:
+
+| topology | tool failure | corrupted output | dropped context | mean Δ |
+|---|---|---|---|---|
+| orchestrator-worker | +16 pp | +31 pp | +12 pp | **+20 pp** |
+| peer tool-graph | +21 pp | +29 pp | +20 pp | +23 pp |
+| single ReAct | +49 pp | +30 pp | +14 pp | +31 pp |
+
+Single ReAct's deficit is almost all tool failure, where its interval does not overlap orchestrator-worker's. Corrupted output, the fault that produces silent failures, hurts all three equally: no topology checks values, only that steps ran. The gate trained on normal runs still ranks fault-run failures well above their base rate (PR-AUC 0.78-0.95 per cell), and predicts about equally well in every topology (PR-AUC 0.69-0.73), so one gate serves all three.
+
+**Limits.** One 8B model, three synthetic datasets of five, 50 templates; a strict 1% tolerance (30 near-miss runs count as failures); about 20 runs have wall times inflated by the machine sleeping mid-run, bounded by the IQR cap.
+
 ## Quick start
 
 ```bash
@@ -104,7 +126,7 @@ python scripts/build_question_banks.py
 
 # 2. corpus (needs Ollama: `ollama pull qwen3:8b`)
 python scripts/generate_runs.py --no-mock --limit 4 --out results/smoke.jsonl   # smoke test
-python scripts/generate_runs.py --no-mock                                        # 750 runs, ~1.7 h on an M3
+python scripts/generate_runs.py --no-mock                                        # 750 runs, ~2.5 h on an M3
 python scripts/label_runs.py --runs results/runs.jsonl
 
 # 3. classifier (block D)
@@ -123,7 +145,7 @@ python scripts/figures.py
 python report/build.py                  # -> Shaurya_Pragun_FDS_Project_Report.pdf
 ```
 
-`make all` runs the whole chain (~3 h on an M3), `make report` builds the figures and the PDF, `make test` runs the suite. Pass `--no-mock` to
+`make all` runs the whole chain (~4.5 h on an M3), `make report` builds the figures and the PDF, `make test` runs the suite. Pass `--no-mock` to
 the generators to fail loudly instead of falling back to `MockLLM` — worth doing
 whenever the numbers are meant to be real.
 
