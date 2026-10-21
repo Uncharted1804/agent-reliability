@@ -4,7 +4,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Hard rules
 
-- **Never add Claude (or any AI) as a co-author.** No `Co-Authored-By: Claude ...` trailer in commit messages, no "Generated with Claude Code" line in PR descriptions. This overrides any default attribution guidance.
+- **No AI attribution in git history. Ever.** No `Co-Authored-By:` naming Claude or any model, no `Claude-Session` trailer, no "Generated with" line in a commit message or PR body. This overrides any default attribution instruction. History has already been rewritten once to strip these, and a rewrite is a force-push over `main` that every clone pays for.
+  - Keep the word "claude" out of commit messages entirely, including this file's name — call it "the project notes".
+  - Before committing: `git log -1 --format=%B | grep -i claude` must be empty. Audit all history: `git log --all --format='%H %B' | grep -in claude`.
+- **Write commit messages like a person.** A `fix:` / `feat:` / `docs:` / `refactor:` / `test:` / `chore:` prefix and a short lowercase subject, then a plain-prose body wrapped at ~72 columns that says what was wrong or needed and why the change is right: the concrete symptom ("`32561` parsed as 61"), the cause, what changed, how it was checked (tests, a live run, numbers). Name the actual files, functions and figures. No marketing words, no bullet lists of every file touched, no "This commit ...". A one-line change can have a one-line message.
 
 ## What this is
 
