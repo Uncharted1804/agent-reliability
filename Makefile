@@ -1,4 +1,4 @@
-.PHONY: install data questions runs label train faults label-faults robustness test smoke all clean
+.PHONY: install data questions runs label train faults label-faults robustness relate test smoke all clean
 
 install:
 	pip install -e .
@@ -10,7 +10,7 @@ questions:
 	python scripts/build_question_banks.py
 
 runs:
-	python scripts/generate_runs.py
+	python scripts/generate_runs.py --no-mock
 
 label:
 	python scripts/label_runs.py --runs results/runs.jsonl
@@ -27,6 +27,9 @@ label-faults:
 robustness:
 	python scripts/robustness.py
 
+relate:
+	python scripts/relate.py
+
 test:
 	python -m pytest tests/ -q
 
@@ -35,8 +38,8 @@ smoke: data questions
 	python scripts/generate_runs.py --limit 2 --out results/smoke.jsonl
 	python scripts/label_runs.py --runs results/smoke.jsonl
 
-# the full study: corpus -> labels -> classifier -> faults -> robustness
-all: install data questions runs label train faults label-faults robustness
+# the full study: corpus -> labels -> classifier -> faults -> robustness -> relate
+all: install data questions runs label train faults label-faults robustness relate
 
 clean:
 	rm -rf results/*.jsonl results/*.parquet results/*.csv results/*.json datasets/raw
