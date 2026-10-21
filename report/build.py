@@ -337,7 +337,6 @@ table([
 ], [44 * mm, 72 * mm, 58 * mm], caption="<b>Table 1.</b> Closest prior work.")
 
 # ------------------------------------------------------------------ 3 framework
-story.append(PageBreak())
 p("3. The AgentRel framework", H1)
 p("AgentRel sits <i>outside</i> the agent. It never changes how the agent reasons; it runs controlled tasks, "
   f"labels every run against computed ground truth, learns which signals precede a {SF}, and stress-tests the "
