@@ -93,13 +93,21 @@ def _filter_rows(s: Session, args: dict) -> ToolResult:
 
 @tool("aggregate")
 def _aggregate(s: Session, args: dict) -> ToolResult:
-    """args: {op: mean|sum|median|count|max|min|nunique, column: str}"""
+    """args: {op: mean|sum|median|count|max|min|nunique|quantile, column: str,
+    q: 0..1 (quantile only)}"""
     try:
         df = s.scratch.get("df", s.primary())
         op = args.get("op", "count")
         col = args.get("column")
         if op == "count":
             val = int(len(df))
+        elif op == "quantile":
+            # the 1.5*IQR templates need Q1/Q3; without this op no agent could
+            # answer them, so they measured the toolset rather than the agent
+            q = float(args["q"])
+            if not 0.0 <= q <= 1.0:
+                raise ValueError(f"q must be in [0, 1], got {q}")
+            val = float(pd.to_numeric(df[col], errors="coerce").dropna().quantile(q))
         else:
             series = pd.to_numeric(df[col], errors="coerce").dropna()
             val = float(getattr(series, op)())

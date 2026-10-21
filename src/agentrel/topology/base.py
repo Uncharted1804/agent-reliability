@@ -33,6 +33,7 @@ Tools and their exact arguments:
   load_table           {"table":"<name>"}  -> make that table the working frame
   filter_rows          {"query":"<pandas query>"}  e.g. "Sex == 'male' and Age > 30"
   aggregate            {"op":"mean|sum|median|count|max|min|nunique","column":"<col>"}
+                       {"op":"quantile","column":"<col>","q":0.25}  q between 0 and 1
   group_aggregate      {"by":"<col>","op":"mean|sum|count|median|max|min",
                         "column":"<col>","pick":"idxmax|idxmin|value"}
   join_tables          {"left":"<name>","right":"<name>","on":"<col>","how":"left|inner"}
@@ -66,7 +67,7 @@ def initial_history(trace: RunTrace, session: Session) -> str:
 # local model: a whole multi-step plan emitted at once (we take the first
 # action and let the loop re-prompt), the tool name placed directly in
 # "action", and tool arguments flattened to the top level instead of "args".
-_ARG_KEYS = {"table", "query", "op", "column", "by", "pick", "left", "right", "on", "how"}
+_ARG_KEYS = {"table", "query", "op", "column", "q", "by", "pick", "left", "right", "on", "how"}
 _CONTROL_ACTIONS = {"accept", "redo", "handoff"}
 
 

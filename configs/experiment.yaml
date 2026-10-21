@@ -2,7 +2,10 @@
 
 base_llm:
   provider: ollama            # local open model
-  model: llama3.1             # override with env AGENTREL_MODEL
+  model: qwen3:8b             # override with env AGENTREL_MODEL; picked by the
+                              # 4-model benchmark (tied with llama3.1 on accuracy,
+                              # ~40% faster, loops half as often)
+  think: false                # qwen3 thinks by default: ~300 tokens a step, slow
   host: http://localhost:11434
   temperature: 0.0
   max_tokens: 1024

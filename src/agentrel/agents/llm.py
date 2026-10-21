@@ -48,6 +48,8 @@ class OllamaLLM:
                 "num_predict": self.cfg.max_tokens,
             },
         }
+        if self.cfg.think is not None:
+            payload["think"] = self.cfg.think
         resp = requests.post(url, json=payload, timeout=self.cfg.request_timeout_s)
         resp.raise_for_status()
         data = resp.json()

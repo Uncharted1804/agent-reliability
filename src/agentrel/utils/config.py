@@ -21,6 +21,7 @@ class LLMConfig:
     temperature: float = 0.0
     max_tokens: int = 1024
     request_timeout_s: int = 120
+    think: bool | None = None   # thinking models (qwen3): False keeps reasoning out of the budget
 
 
 @dataclass
@@ -86,5 +87,6 @@ def load_config(path: str | Path | None = None) -> Config:
         temperature=float(llm_raw.get("temperature", 0.0)),
         max_tokens=int(llm_raw.get("max_tokens", 1024)),
         request_timeout_s=int(llm_raw.get("request_timeout_s", 120)),
+        think=llm_raw.get("think"),
     )
     return Config(raw=raw, llm=llm)

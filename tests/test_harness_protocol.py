@@ -132,3 +132,54 @@ def test_initial_history_carries_schema_and_question_but_not_answers():
     assert "table main: columns" in text
     # descriptive only: no computed aggregate leaks into the preamble
     assert "0.66" not in text
+
+
+# --- quantile op ----------------------------------------------------------- #
+# Without it the 1.5*IQR templates were unanswerable through the tools, so
+# every model failed them and they measured the toolset, not the agent.
+def test_aggregate_quantile_matches_pandas():
+    from agentrel.agents.tools import call_tool
+    s = Session(tables={"main": pd.DataFrame({"fare": [1.0, 2.0, 3.0, 4.0, 100.0]})})
+    q1 = call_tool("aggregate", s, {"op": "quantile", "column": "fare", "q": 0.25})
+    q3 = call_tool("aggregate", s, {"op": "quantile", "column": "fare", "q": 0.75})
+    assert (q1.ok, q1.value) == (True, 2.0)
+    assert (q3.ok, q3.value) == (True, 4.0)
+
+
+def test_aggregate_quantile_needs_q_in_range():
+    from agentrel.agents.tools import call_tool
+    s = Session(tables={"main": pd.DataFrame({"fare": [1.0, 2.0]})})
+    assert not call_tool("aggregate", s, {"op": "quantile", "column": "fare"}).ok
+    assert not call_tool("aggregate", s, {"op": "quantile", "column": "fare", "q": 25}).ok
+
+
+def test_flattened_quantile_argument_is_kept():
+    got = parse_action('{"action":"aggregate","op":"quantile","column":"fare","q":0.25}')
+    assert got["args"] == {"op": "quantile", "column": "fare", "q": 0.25}
+
+
+def test_protocol_documents_quantile():
+    from agentrel.topology.base import ACTION_PROTOCOL
+    assert "quantile" in ACTION_PROTOCOL and '"q"' in ACTION_PROTOCOL
+
+
+# --- base LLM payload ------------------------------------------------------ #
+def test_think_flag_reaches_ollama_only_when_set(monkeypatch):
+    from agentrel.agents import llm as llm_mod
+    from agentrel.utils.config import LLMConfig
+
+    sent = []
+
+    class _Resp:
+        def raise_for_status(self):
+            pass
+
+        def json(self):
+            return {"message": {"content": "{}"}}
+
+    monkeypatch.setattr(llm_mod.requests, "post",
+                        lambda url, json=None, timeout=None: sent.append(json) or _Resp())
+    llm_mod.OllamaLLM(LLMConfig(model="qwen3:8b", think=False)).complete("s", "u")
+    llm_mod.OllamaLLM(LLMConfig(model="llama3.1:8b")).complete("s", "u")
+    assert sent[0]["think"] is False
+    assert "think" not in sent[1]   # unset means the model's own default
