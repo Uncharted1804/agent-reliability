@@ -35,14 +35,7 @@ from reportlab.platypus import (
     TableStyle,
 )
 
-from agentrel.model.metrics import (
-    evaluate_extended,
-    expected_calibration_error,
-    f2_score,
-    grouped_bootstrap_ci,
-    pr_auc,
-    recall_at_budget,
-)
+from corpus_stats import FAULT, MODEL, TOPO, extended, failure_kind
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "Shaurya_Pragun_FDS_Project_Report.pdf"
@@ -210,14 +203,6 @@ def pipeline_diagram() -> Drawing:
     return d
 
 
-TOPO = {"single_react": "Single ReAct", "orchestrator_worker": "Orchestrator-worker",
-        "peer_tool_graph": "Peer tool-graph"}
-FAULT = {"tool_failure": "Tool failure", "corrupted_output": "Corrupted output",
-         "dropped_context": "Dropped context"}
-MODEL = {"lgbm_weighted": "LightGBM, class-weighted (ours)", "smote_lgbm": "LightGBM + SMOTE",
-         "logreg": "Logistic regression, class-weighted", "smote_logreg": "Logistic regression + SMOTE",
-         "dummy_prior": "Prior (always the base rate)"}
-
 # ------------------------------------------------------------------ data
 lab = pd.read_parquet(RES / "labelled.parquet")
 labf = pd.read_parquet(RES / "runs_faults_labelled.parquet")
@@ -234,43 +219,16 @@ realised = labf["fault_realised"].mean()
 test = clf["test_metrics"]
 
 
-def _failure_kind(r) -> str:
-    """Silent = a clean, well-formed answer that is wrong; visible = no usable answer."""
-    if r["label_failure"] == 0:
-        return "correct"
-    if pd.isna(r["parsed_answer"]) or bool(r.get("harness_error", 0)):
-        return "visible"
-    if r["answer_type"] != "numeric":
-        return "silent_category"
-    try:
-        err = abs(float(r["parsed_answer"]) - float(r["truth_value"])) / max(abs(float(r["truth_value"])), 1e-9)
-    except (TypeError, ValueError):
-        return "silent_value"
-    return "silent_near" if err <= 0.05 else "silent_value"
-
-
-kinds = lab.apply(_failure_kind, axis=1).value_counts()
+kinds = lab.apply(failure_kind, axis=1).value_counts()
 n_fail = int(lab["label_failure"].sum())
 n_silent = int(kinds.filter(like="silent").sum())
 
 # extended out-of-fold metrics with template-clustered CIs (nothing retrained)
-y, prob, groups = oof["label_failure"].to_numpy(), oof["p_failure_oof"].to_numpy(), oof["template_id"]
+y = oof["label_failure"].to_numpy()
 theta = rel["threshold_f2_oof"]
-ext = evaluate_extended(y, prob, theta)
+ext, raw_ci = extended(oof, theta)
+ext_ci = {k: f"[{lo:.2f}, {hi:.2f}]" for k, (lo, hi) in raw_ci.items()}
 
-
-def ci(metric):
-    lo, hi = grouped_bootstrap_ci(y, prob, groups, metric, n_resamples=1000)
-    return f"[{lo:.2f}, {hi:.2f}]"
-
-
-ext_ci = {
-    "pr_auc": ci(pr_auc),
-    "roc_auc": ci(lambda a, b: evaluate_extended(a, b, theta)["roc_auc"]),
-    "f2": ci(lambda a, b: f2_score(a, (b >= theta).astype(int))),
-    "ece": ci(expected_calibration_error),
-    "recall_at_20pct": ci(lambda a, b: recall_at_budget(a, b, 0.2)),
-}
 
 # ------------------------------------------------------------------ title
 p("Catching Silent Failures", TITLE)
