@@ -54,7 +54,7 @@ agent-reliability/
 ├── datasets/            # downloaded raw data (gitignored) + question banks
 ├── configs/             # experiment config (topologies, faults, splits)
 ├── scripts/             # entry points: download, generate, label, train, faults, relate, figures
-├── report/              # build.py + findings.json -> ../Shaurya_Pragun_FDS_Project_Report.pdf
+├── report/              # build.py (reportlab) and build_tex.py + latex/ (LaTeX), both fed by findings.json
 ├── tests/               # unit tests for every block
 └── results/             # corpora, labels, tables, figures (gitignored)
 ```
@@ -143,6 +143,7 @@ python scripts/gate.py fit                                   # -> results/gate.j
 python scripts/gate.py score --runs new_runs.jsonl --budget 0.2   # hold or release new answers
 python scripts/figures.py
 python report/build.py                  # -> Shaurya_Pragun_FDS_Project_Report.pdf
+python report/build_tex.py              # LaTeX edition, midsem layout (needs tectonic) -> ..._LaTeX.pdf
 ```
 
 `make all` runs the whole chain (~4.5 h on an M3), `make report` builds the figures and the PDF, `make test` runs the suite. Pass `--no-mock` to

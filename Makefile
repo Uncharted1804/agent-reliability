@@ -1,4 +1,4 @@
-.PHONY: install data questions runs label train faults label-faults robustness relate gate figures report test smoke all clean
+.PHONY: install data questions runs label train faults label-faults robustness relate gate figures report paper test smoke all clean
 
 install:
 	pip install -e .
@@ -38,6 +38,9 @@ figures:
 
 report: figures
 	python report/build.py
+
+paper: figures
+	python report/build_tex.py
 
 test:
 	python -m pytest tests/ -q
